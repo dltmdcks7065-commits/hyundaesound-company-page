@@ -1,0 +1,3398 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>현대음향 장비 스펙시트 & 하중 계산기</title>
+  <!-- SheetJS CDN (엑셀 다운로드 기능) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      line-height: 1.5;
+      padding: 16px;
+      padding-bottom: 80px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    .subtitle { color: #86868b; margin-bottom: 20px; font-size: 14px; }
+    .search-box { margin-bottom: 20px; }
+    .search-box input {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 16px;
+      border: 1px solid #d2d2d7;
+      border-radius: 12px;
+      outline: none;
+      background: white;
+    }
+    .search-box input:focus {
+      border-color: #0071e3;
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 16px;
+      padding: 8px 16px;
+      background: #e8e8ed;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .back-btn:active { background: #d2d2d7; }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .card-clickable { cursor: pointer; flex: 1; display: flex; align-items: center; gap: 16px; }
+    .card img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #eee;
+      flex-shrink: 0;
+    }
+    .card-content { flex: 1; }
+    .card-title { font-size: 17px; font-weight: 600; }
+    .card-sub { color: #86868b; font-size: 13px; margin-top: 4px; }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f0f0f4;
+      padding: 4px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+    .quantity-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: white;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .quantity-btn:active { background: #e0e0e0; }
+    .quantity-input {
+      width: 36px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .load-summary-bar {
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      background: #0071e3;
+      color: white;
+      padding: 14px 20px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,113,227,0.3);
+    }
+    .load-btn {
+      background: white;
+      color: #0071e3;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .main-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .main-title-row h1 {
+      margin-bottom: 0;
+      flex: 1;
+    }
+    .load-toggle-btn {
+      flex-shrink: 0;
+      padding: 8px 12px;
+      background: #e8e8ed;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #1d1d1f;
+      white-space: nowrap;
+    }
+    .load-toggle-btn:active { background: #d2d2d7; }
+    .load-toggle-btn.on {
+      background: #0071e3;
+      color: white;
+    }
+
+
+    .view-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .view-header-row .back-btn { margin-bottom: 0; }
+    .creator-btn {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #f5f5f7;
+      color: #86868b;
+      border: 1px dashed #d2d2d7;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+    .creator-btn:active { background: #e8e8ed; }
+    .creator-hero {
+      text-align: center;
+      padding: 24px 12px 16px;
+    }
+    .creator-hero img {
+      height: 48px;
+      margin-bottom: 12px;
+    }
+    .creator-version {
+      display: inline-block;
+      background: #1d1d1f;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+    .creator-section {
+      margin-top: 20px;
+    }
+    .creator-section h2 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+    .patch-item {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border-left: 4px solid #0071e3;
+    }
+    .patch-item.fun { border-left-color: #ff9500; }
+    .patch-ver-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .patch-ver {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0071e3;
+    }
+    .patch-item.fun .patch-ver { color: #ff9500; }
+    .patch-more-btn {
+      flex-shrink: 0;
+      background: #f0f0f4;
+      border: none;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #0071e3;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .patch-more-btn:active { background: #e0e0e5; }
+    .patch-body {
+      font-size: 13px;
+      color: #1d1d1f;
+      line-height: 1.6;
+    }
+    .patch-line {
+      padding: 2px 0;
+    }
+    .patch-body.collapsed .patch-line:nth-child(n+3) {
+      display: none;
+    }
+    .patch-body.collapsed .patch-ellipsis {
+      display: block;
+      color: #86868b;
+      padding: 2px 0;
+    }
+    .patch-ellipsis {
+      display: none;
+    }
+    .patch-line.head {
+      color: #0071e3;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+
+    /* 랜덤 잔소리 / 라인통 */
+    .botari-box {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border-left: 4px solid #ff9500;
+      text-align: center;
+    }
+    .botari-scene {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin-bottom: 14px;
+    }
+    .botari-ascii {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.15;
+      color: #4a4a4a;
+      white-space: pre;
+      display: block;
+      text-align: left;
+      margin: 0;
+      user-select: none;
+    }
+    .stickman-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .stickman-ascii {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 28px;
+      line-height: 1.05;
+      color: #1d1d1f;
+      white-space: pre;
+      text-align: center;
+      user-select: none;
+      font-weight: 700;
+      margin: 0;
+    }
+    .thought-col {
+      padding-top: 0;
+      min-width: 120px;
+      max-width: 160px;
+    }
+
+    .botari-result {
+      position: relative;
+      padding: 8px 10px;
+      background: #fff8f0;
+      border: 1.5px solid #ffd9a8;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #1d1d1f;
+      line-height: 1.4;
+      text-align: left;
+    }
+    .botari-result:after {
+      content: "";
+      position: absolute;
+      left: -7px;
+      top: 10px;
+      width: 0; height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 8px solid #fff8f0;
+    }
+    .botari-result:before {
+      content: "";
+      position: absolute;
+      left: -9px;
+      top: 9px;
+      width: 0; height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-right: 9px solid #ffd9a8;
+    }
+    .botari-result.empty {
+      color: #86868b;
+      font-weight: 500;
+      font-size: 12px;
+    }
+    .botari-open-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #ff9500;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255,149,0,0.35);
+    }
+    .botari-open-btn:active {
+      transform: scale(0.97);
+      background: #e68600;
+    }
+
+
+
+    .creator-footer {
+      text-align: center;
+      color: #86868b;
+      font-size: 12px;
+      margin: 24px 0 8px;
+      line-height: 1.6;
+    }
+
+
+    .modal-overlay {
+      position: fixed;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 850px;
+      max-height: 90vh;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #eee;
+    }
+    .modal-body { overflow-y: auto; flex: 1; }
+    .modal-footer {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 엑셀 양식 모달 내 스타일 */
+    .excel-table-container {
+      background: #fff;
+      padding: 10px;
+    }
+    .excel-main-header {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+    }
+    .excel-main-header td {
+      border: 1px solid #000;
+      padding: 6px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .excel-main-title {
+      font-size: 20px;
+      font-weight: bold;
+      width: 35%;
+      letter-spacing: 2px;
+      background-color: #f2f2f2;
+    }
+    .excel-info-label {
+      background-color: #f9f9f9;
+      font-weight: bold;
+      width: 18%;
+    }
+    .excel-info-value {
+      text-align: left !important;
+      width: 47%;
+      padding-left: 10px !important;
+    }
+
+    .excel-section-title {
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 3px;
+      text-align: center;
+      margin: 15px 0 8px 0;
+    }
+    .excel-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+      font-size: 12px;
+      color: #000;
+      margin-bottom: 10px;
+    }
+    .excel-table th, .excel-table td {
+      border: 1px solid #000;
+      padding: 6px 4px;
+      text-align: center;
+    }
+    .excel-table th {
+      background-color: #b0b0b0;
+      font-weight: bold;
+      border-bottom: 2px solid #000;
+    }
+    .excel-table .total-row td {
+      background-color: #d9d9d9;
+      font-weight: bold;
+      border-top: 2px solid #000;
+    }
+
+    .detail-box {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    .detail-image {
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      background: #f0f0f0;
+    }
+    .detail-title { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .detail-brand { color: #86868b; font-size: 14px; margin-bottom: 16px; }
+    .spec-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+    .spec-item:last-child { border-bottom: none; }
+    .spec-label { font-size: 12px; color: #86868b; margin-bottom: 2px; }
+    .spec-value { font-size: 15px; white-space: pre-line; font-weight: 500; }
+    .hidden { display: none !important; }
+    .no-image {
+      width: 64px;
+      height: 64px;
+      background: #e8e8ed;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #86868b;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .empty-message { text-align: center; color: #86868b; padding: 40px 20px; }
+
+    /* 리깅 메뉴얼 관련 */
+    .manual-btn-main {
+      display: block;
+      width: 100%;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      padding: 16px 20px;
+      background: #1d1d1f;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+    }
+    .manual-btn-main:active { background: #333; }
+
+    .brand-header {
+      font-size: 15px;
+      font-weight: 700;
+      color: #86868b;
+      margin: 20px 0 10px 0;
+      padding-left: 4px;
+      letter-spacing: 0.5px;
+    }
+    .manual-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .manual-card-title { font-size: 16px; font-weight: 600; }
+    .manual-card-sub { font-size: 13px; color: #86868b; margin-top: 2px; }
+    .manual-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .manual-open-badge {
+      background: #0071e3;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+    }
+    .manual-open-badge.download {
+      background: #86868b;
+    }
+    .manual-open-badge:active { opacity: 0.85; }
+
+
+    /* 커버리지 각도 뷰어 */
+    .angle-btn {
+      display: inline-block;
+      margin: 4px 6px 4px 0;
+      padding: 10px 16px;
+      background: #0071e3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .angle-btn:active { background: #005bb5; }
+    .angle-btn.selected { background: #1d1d1f; }
+    .clickable-coverage {
+      color: #0071e3;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    #angle-camera-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #000;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+    }
+    #angle-camera-modal.hidden { display: none !important; }
+    #angle-video {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #angle-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .angle-cam-topbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      padding: 14px 16px;
+      padding-top: max(14px, env(safe-area-inset-top));
+      background: linear-gradient(rgba(0,0,0,0.7), transparent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+    .angle-cam-info {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .angle-cam-close {
+      background: #ff3b30;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .angle-cam-hint {
+      position: absolute;
+      bottom: 20px;
+      left: 0; right: 0;
+      text-align: center;
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .angle-select-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* 딜레이 계산기 */
+    .delay-title {
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      margin: 8px 0 20px;
+      line-height: 1.4;
+      color: #1d1d1f;
+    }
+    .delay-field {
+      margin-bottom: 16px;
+    }
+    .delay-field label {
+      display: block;
+      font-size: 13px;
+      color: #86868b;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .delay-field input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 18px;
+      border: 1px solid #d2d2d7;
+      border-radius: 12px;
+      outline: none;
+      background: white;
+      font-weight: 600;
+    }
+    .delay-field input:focus {
+      border-color: #0071e3;
+      box-shadow: 0 0 0 3px rgba(0,113,227,0.15);
+    }
+    .delay-result-box {
+      background: #0071e3;
+      color: white;
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .delay-result-label {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 6px;
+    }
+    .delay-result-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .delay-result-unit {
+      font-size: 18px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    .delay-humor {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .delay-note {
+      font-size: 12px;
+      color: #86868b;
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+
+
+
+
+    /* 인쇄 전용 스타일 */
+    @media print {
+      body * { visibility: hidden; }
+      #load-modal, #load-modal * { visibility: visible; }
+      #load-modal {
+        position: absolute;
+        left: 0; top: 0; width: 100%; height: auto;
+        background: white; padding: 0;
+      }
+      .modal-content { box-shadow: none; border-radius: 0; max-width: 100%; padding: 0; }
+      .modal-header, .modal-footer, .quantity-control button { display: none !important; }
+      .quantity-input { border: none !important; width: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- 실시간 하중 요약 상태 바 (기본 숨김) -->
+    <div class="load-summary-bar hidden" id="load-summary-bar">
+      <div>
+        <span style="font-size: 13px; opacity: 0.9;">선택 제품: <strong id="selected-count">0</strong>개</span>
+        <div style="font-size: 18px; font-weight: bold;">총 하중: <span id="total-weight">0</span> kg</div>
+      </div>
+      <button class="load-btn" onclick="openLoadListModal()">하중리스트 합본 보기</button>
+    </div>
+
+    <!-- 대분류 선택 화면 -->
+    <div id="category-view">
+      <div class="main-title-row">
+        <h1>현대음향 만능툴</h1>
+        <button type="button" class="load-toggle-btn load-toggle-btn-main" onclick="toggleLoadBar()">하중리스트 보기</button>
+      </div>
+      <p class="subtitle">장비 카테고리를 선택하거나 제품을 검색하세요</p>
+
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="제품명, 브랜드, 구분 검색..." oninput="handleSearch()">
+      </div>
+
+      <div id="category-list"></div>
+      <div id="search-result" class="hidden"></div>
+
+      <div id="bottom-manual-buttons">
+        <button class="manual-btn-main" onclick="showManuals()">📖 리깅 메뉴얼 보기</button>
+        <button class="manual-btn-main" onclick="showProductManuals()" style="margin-top: 10px;">📄 제품 메뉴얼 보기</button>
+        <button class="manual-btn-main" onclick="showAnglePicker()" style="margin-top: 10px;">📐 커버리지 각도 뷰어</button>
+        <button class="manual-btn-main" onclick="showDelayCalc()" style="margin-top: 10px;">⏱️ 딜레이 계산기</button>
+        <button class="creator-btn" onclick="showCreator()">✦ 제작자 / 패치노트</button>
+      </div>
+    </div>
+
+
+
+
+    <!-- 리깅 메뉴얼 목록 화면 -->
+    <div id="manual-view" class="hidden">
+      <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+      <h1>리깅 메뉴얼</h1>
+      <p class="subtitle">보기 = 미리보기 / 다운로드 = 파일 저장</p>
+
+      <div id="manual-list"></div>
+    </div>
+
+    <!-- 제품 메뉴얼 목록 화면 -->
+    <div id="product-manual-view" class="hidden">
+      <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+      <h1>제품 메뉴얼</h1>
+      <p class="subtitle">제품을 선택하면 메뉴얼이 새 탭에서 열립니다</p>
+      <div id="product-manual-list"></div>
+    </div>
+
+    <!-- 커버리지 각도 선택 화면 -->
+    <div id="angle-picker-view" class="hidden">
+      <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+      <h1>커버리지 각도 뷰어</h1>
+      <p class="subtitle">사용할 수평 각도를 선택한 뒤 카메라를 실행하세요</p>
+      <div class="detail-box" style="margin-top:12px;">
+        <div style="font-size:14px; color:#86868b; margin-bottom:8px;">자주 쓰는 수평 각도</div>
+        <div class="angle-select-grid" id="angle-select-grid"></div>
+        <div style="margin-top:20px; text-align:center;">
+          <button class="manual-btn-main" id="start-angle-camera-btn" onclick="startAngleCamera()" style="margin-top:0;" disabled>
+            📷 선택한 각도로 카메라 실행
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 딜레이 계산기 화면 -->
+    <div id="delay-calc-view" class="hidden">
+      <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+      <h1>딜레이 계산기</h1>
+      <p class="subtitle">가까운 스피커(FF)에 넣을 딜레이를 간단히 계산합니다</p>
+      <div class="detail-box" style="margin-top:12px;">
+        <div class="delay-title">그럼에도 불구하고<br>귀를 믿자!</div>
+
+        <div class="delay-field">
+          <label>가까운 스피커 (FF) 거리 (m)</label>
+          <input type="number" id="delay-ff" inputmode="decimal" min="0" step="0.1" placeholder="예: 8" oninput="calcDelay()">
+        </div>
+        <div class="delay-field">
+          <label>먼 스피커 (MAIN) 거리 (m)</label>
+          <input type="number" id="delay-main" inputmode="decimal" min="0" step="0.1" placeholder="예: 25" oninput="calcDelay()">
+        </div>
+
+        <div class="delay-result-box">
+          <div class="delay-result-label">FF에 넣을 딜레이</div>
+          <div>
+            <span class="delay-result-value" id="delay-result">—</span>
+            <span class="delay-result-unit"> ms</span>
+          </div>
+          <div class="delay-humor" id="delay-humor"></div>
+        </div>
+
+        <div class="delay-note">
+          음속 343 m/s (약 20°C) 기준<br>
+          공식: (MAIN − FF) ÷ 0.343 ≈ ms
+        </div>
+      </div>
+    </div>
+
+    <!-- 브랜드 목록 화면 -->
+    <div id="brand-view" class="hidden">
+      <div class="view-header-row">
+        <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+        <button type="button" class="load-toggle-btn load-toggle-btn-main" onclick="toggleLoadBar()">하중리스트 보기</button>
+      </div>
+      <h1 id="category-title"></h1>
+      <p class="subtitle">브랜드를 선택하세요</p>
+      <div id="brand-list"></div>
+    </div>
+
+    <!-- 제품 목록 화면 -->
+    <div id="product-view" class="hidden">
+      <div class="view-header-row">
+        <button class="back-btn" onclick="showBrands(currentCategory)">← 브랜드 목록</button>
+        <button type="button" class="load-toggle-btn load-toggle-btn-main" onclick="toggleLoadBar()">하중리스트 보기</button>
+      </div>
+      <h1 id="product-title"></h1>
+      <p class="subtitle">제품 수량을 선택하세요</p>
+      <div id="product-list"></div>
+    </div>
+
+    <!-- 상세 스펙 화면 -->
+    <div id="detail-view" class="hidden">
+      <div class="view-header-row">
+        <button class="back-btn" onclick="showProducts(currentBrand)">← 제품 목록으로</button>
+        <button type="button" class="load-toggle-btn load-toggle-btn-main" onclick="toggleLoadBar()">하중리스트 보기</button>
+      </div>
+      <div class="detail-box">
+        <img id="detail-image" class="detail-image hidden" alt="제품 사진" onerror="this.classList.add('hidden')">
+        <div class="detail-title" id="detail-name"></div>
+        <div class="detail-brand" id="detail-brand"></div>
+        <div id="detail-specs"></div>
+      </div>
+    </div>
+
+    <!-- 제작자 / 패치노트 -->
+    <div id="creator-view" class="hidden">
+      <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+      <div class="detail-box">
+        <div class="creator-hero">
+
+          <div style="font-size:18px;font-weight:800;margin-top:4px;">Hyundaesound Tools</div>
+          <div class="creator-version" id="app-version-badge">v1.2.85</div>
+          <div style="font-size:13px;color:#86868b;margin-top:10px;">현대음향 현장용 스펙 · 하중 · 메뉴얼 도구</div>
+        </div>
+
+        <div class="creator-section">
+          <h2>📋 패치 노트</h2>
+          <div class="patch-item">
+            <div class="patch-ver-row">
+              <div class="patch-ver">패치 내역</div>
+              <button type="button" class="patch-more-btn" onclick="togglePatchBody(this)">더보기</button>
+            </div>
+            <div class="patch-body collapsed">
+              <div class="patch-line head">v1.1.1 — 2026.08.28</div>
+              <div class="patch-line">• 현대음향 장비 스펙시트 개설</div>
+              <div class="patch-line">• 스피커 22종 추가</div>
+              <div class="patch-line">• 엠프 7종 추가</div>
+              <div class="patch-line">• 악세사리 24종 추가</div>
+              <div class="patch-line">• 장비 하중 계산기 기능 추가</div>
+              <div class="patch-line head">v1.2.85 — 2026.09.04</div>
+              <div class="patch-line">• 리깅 메뉴얼 칸 개설 메뉴얼 12개 추가</div>
+              <div class="patch-line">• 제품 메뉴얼 칸 개설 메뉴얼 5개 추가</div>
+              <div class="patch-line">• 커버리지 각도 카메라 뷰어 칸 개설</div>
+              <div class="patch-line">• 딜레이 간단 계산기 기능 개설</div>
+              <div class="patch-line">• 하중리스트 보기/가리기 기능 추가</div>
+              <div class="patch-line">• 하중리스트 보기칸 버그픽스</div>
+              <div class="patch-line">• 제작자 패치노트 칸 개설</div>
+              <div class="patch-line">• 잔소리 라인통 기능 개설 잔소리55종 추가 (하루에 시작을 라인통 열기로 해보기를 추천)</div>
+              <div class="patch-ellipsis">…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-section">
+          <h2>📚 메뉴얼 버전</h2>
+          <div class="patch-item">
+            <div class="patch-ver-row">
+              <div class="patch-ver">등록된 메뉴얼</div>
+              <button type="button" class="patch-more-btn" onclick="togglePatchBody(this)">더보기</button>
+            </div>
+            <div class="patch-body collapsed">
+              <div class="patch-line head">• L-Acoustics</div>
+              <div class="patch-line">K1 : K1 owner's manual (EN) version 2.0 August 21, 2024</div>
+              <div class="patch-line">K2 : K2 owner's manual (EN) version 3.0 September 25, 2023</div>
+              <div class="patch-line">KARA II : Kara II owner's manual (EN) version 5.0 September 25, 2024</div>
+              <div class="patch-line">SYVA : Syva owner's manual (EN) version 1.0 September 12, 2022</div>
+              <div class="patch-line">ARCS II : ARCSII_RM_EN_2.0 December 15, 2021</div>
+              <div class="patch-line">X8 : X8 owner's manual (EN) version 2.0 October 29, 2024</div>
+              <div class="patch-line">SB18 : SB18_RM_EN_2.0 September 3, 2024</div>
+              <div class="patch-line">KS28 : KS28 owner's manual (EN) version 1.0 September 13, 2022</div>
+              <div class="patch-line">LA-RAK II AVB : LA-RAK II AVB owner's manual (EN) version 3.0 October 21, 2024</div>
+              <div class="patch-line head">• d&b</div>
+              <div class="patch-line">J8/J12 : 2.2 en, 03/2016</div>
+              <div class="patch-line">J-Series Rigging : 1.4 EN, 10/2016</div>
+              <div class="patch-line">J-SUB : 2.2 en, 03/2016</div>
+              <div class="patch-line head">등록된 제품 메뉴얼</div>
+              <div class="patch-line">LA12X : LA12X owner's manual (EN) version 10.1 August 31, 2023</div>
+              <div class="patch-line">LA4X : LA4X owner's manual (EN) version 16.3 January 22, 2026</div>
+              <div class="patch-line">LA8 : LA8 owner's manual (EN) version 19.0 April 1, 2020</div>
+              <div class="patch-line">Preset Guide : Preset Guide owner's manual (EN) version 27.0 June 3, 2025</div>
+              <div class="patch-line">D80 : 1.14 en, 09/2019</div>
+              <div class="patch-ellipsis">…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="creator-section">
+          <h2>🎲 랜덤 잔소리 라인통</h2>
+          <div class="botari-box">
+            <div class="botari-scene">
+              <pre class="botari-ascii" id="botari-ascii">  ################
+  # Hyundae sound#
+  #  LINE  TONG  #
+  #  [ ]    [ ]  #
+  ################
+    O          O</pre>
+              <div class="stickman-group">
+                <pre class="stickman-ascii"> O
+/|\
+/ \</pre>
+                <div class="thought-col">
+                  <div class="botari-result empty" id="botari-result">아직 안 열었어요…</div>
+                </div>
+              </div>
+
+            </div>
+            <button type="button" class="botari-open-btn" onclick="openBotari()">라인통 열어보기</button>
+          </div>
+
+        </div>
+
+
+
+
+        <div class="creator-footer">
+          Made for Hyundaesound<br>
+          버그·건의는 제작자에게 카톡으로
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 커버리지 각도 카메라 모달 -->
+  <div id="angle-camera-modal" class="hidden">
+    <video id="angle-video" autoplay playsinline muted></video>
+    <canvas id="angle-canvas"></canvas>
+    <div class="angle-cam-topbar">
+      <div class="angle-cam-info" id="angle-cam-label">—°</div>
+      <button class="angle-cam-close" onclick="stopAngleCamera()">✕ 닫기</button>
+    </div>
+    <div class="angle-cam-hint">가로 모드로 사용하면 더 정확합니다</div>
+  </div>
+
+
+  <!-- 하중리스트 합본 모달 (완전한 양식 구현) -->
+  <div id="load-modal" class="modal-overlay hidden">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 style="font-size: 18px;">하중리스트 합본 (엑셀 양식)</h2>
+        <div>
+          <button class="back-btn" style="margin:0; background:#0071e3; color:white; margin-right:6px;" onclick="exportToExcel()">엑셀 다운로드 (.xlsx)</button>
+          <button class="back-btn" style="margin:0; background:#34c759; color:white; margin-right:6px;" onclick="window.print()">인쇄 / PDF 저장</button>
+          <button class="back-btn" style="margin:0;" onclick="closeLoadListModal()">✕ 닫기</button>
+        </div>
+      </div>
+      
+      <div class="modal-body">
+        <div class="excel-table-container">
+          
+          <!-- 상단 정보 헤더 -->
+          <table class="excel-main-header">
+            <tr>
+              <td rowspan="8" class="excel-main-title">장비 하중<br>리스트</td>
+              <td class="excel-info-label">공 연 명</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">업 체 명</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">담 당 자</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">반입(반출)장소</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">반 입 일 시</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">반 출 일 시</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">반입(반출)목적</td>
+              <td class="excel-info-value"></td>
+            </tr>
+            <tr>
+              <td class="excel-info-label">총 전기 사용량</td>
+              <td class="excel-info-value"></td>
+            </tr>
+          </table>
+
+          <!-- 1. 장비 LIST -->
+          <div class="excel-section-title">※ 장비 L I S T ※</div>
+          <table class="excel-table">
+            <thead>
+              <tr>
+                <th style="width: 7%;">No.</th>
+                <th style="width: 25%;">품 명</th>
+                <th style="width: 23%;">규 격 (mm)</th>
+                <th style="width: 10%;">수량</th>
+                <th style="width: 8%;">단위</th>
+                <th style="width: 10%;">무게 (kg)</th>
+                <th style="width: 10%;">합계 (kg)</th>
+                <th style="width: 7%;">용 도</th>
+              </tr>
+            </thead>
+            <tbody id="excel-table-body"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="3" style="text-align: center;">합 계 (kg)</td>
+                <td class="modal-total-qty">0</td>
+                <td>ea</td>
+                <td>-</td>
+                <td class="modal-total-weight">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- 2. 하중 분산 계획 -->
+          <div class="excel-section-title">※ 하 중 분 산 계 획 ※</div>
+          <table class="excel-table">
+            <thead>
+              <tr>
+                <th style="width: 7%;">No.</th>
+                <th style="width: 23%;">품 명</th>
+                <th style="width: 20%;">규 격 (mm)</th>
+                <th style="width: 8%;">수량</th>
+                <th style="width: 7%;">단위</th>
+                <th style="width: 10%;">무게 (kg)</th>
+                <th style="width: 10%;">합계 (kg)</th>
+                <th style="width: 15%;">설치 방법 또는 위치</th>
+              </tr>
+            </thead>
+            <tbody id="plan-table-body"></tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="3" style="text-align: center;">합 계 (kg)</td>
+                <td class="modal-total-qty">0</td>
+                <td>ea</td>
+                <td>-</td>
+                <td class="modal-total-weight">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div id="modal-empty-msg" class="empty-message hidden">선택된 장비가 없습니다.</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="back-btn" style="margin:0; background:#ff3b30; color:white;" onclick="resetCart()">전체 초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const mainCategories = ["스피커", "엠프", "악세사리", "마이크", "콘솔", "아웃보드"];
+
+    // 리깅 메뉴얼 목록 (외부 PDF 링크)
+    // ★ 아래 url 값을 실제 PDF 주소로 교체하세요 (Google Drive, Dropbox, 회사 서버 등)
+    const riggingManuals = [
+      {
+        brand: "L-ACOUSTICS",
+        items: [
+          {
+            name: "K1",
+            subtitle: "K1 Operator Manual (2 parts)",
+            parts: [
+              { label: "1–61", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/K1_OM_EN-1-61.pdf" },
+              { label: "62–142", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/K1_OM_EN-62-142_compressed.pdf" }
+            ]
+          },
+          { name: "K2", subtitle: "K2 Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/k2_om_en_compressed.pdf" },
+          { name: "KARA II", subtitle: "KARA II Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/Kara_II_OM_EN_compressed.pdf" },
+          { name: "SYVA", subtitle: "Syva Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/Syva_OM_EN.pdf" },
+          { name: "ARCS II", subtitle: "ARCS II Rigging Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/ARCSII_RM_EN.pdf" },
+          { name: "X8", subtitle: "X8 Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/X8_OM_EN.pdf" },
+          { name: "SB18", subtitle: "SB18 Rigging Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/SB18_RM_EN.pdf" },
+          { name: "KS28", subtitle: "KS28 Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/KS28_OM_EN.pdf" },
+          { name: "LA-RAK II AVB", subtitle: "LA-RAK II AVB Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/LA-RAK_II_AVB_OM_EN_compressed.pdf" }
+        ]
+      },
+      {
+        brand: "d&b audiotechnik",
+        items: [
+          { name: "J8 / J12", subtitle: "J8/J12 Manual 2.2", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/dbaudio-manual-j8-j12-2.2-en%20(1).pdf" },
+          { name: "J-Series Rigging", subtitle: "J-Series Rigging Manual 1.4", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/dbaudio-manual-rigging-j-series-1.4-en%20(2).pdf" },
+          { name: "J-SUB", subtitle: "J-SUB Manual 2.2", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/dbaudio-manual-j-sub-2.2-en.pdf" }
+        ]
+      }
+    ];
+
+    // 제품 메뉴얼 (앰프 등)
+    const productManuals = [
+      {
+        brand: "L-ACOUSTICS",
+        items: [
+          { name: "LA12X", subtitle: "LA12X Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/LA12X_OM_EN.pdf" },
+          { name: "LA4X", subtitle: "LA4X Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/LA4X_OM_EN.pdf" },
+          { name: "LA8", subtitle: "LA8 Operator Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/LA8_OM_EN.pdf" },
+          { name: "Preset Guide", subtitle: "L-Acoustics Preset Guide", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/preset_guide_EN.pdf" }
+        ]
+      },
+      {
+        brand: "d&b audiotechnik",
+        items: [
+          { name: "D80", subtitle: "D80 Amplifier Manual 1.14", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/dbaudio-manual-d80-1.14-en.pdf" }
+        ]
+      }
+    ];
+
+
+
+    // 자주 쓰는 수평 커버리지 각도 (L-Acoustics / d&b 라인·소스·컬럼 어레이 기준)
+    const commonAngles = [22.5, 45, 50, 60, 70, 80, 85, 90, 100, 110, 120, 140];
+    let selectedAngle = null;
+    let angleStream = null;
+    let angleAnimId = null;
+
+    const equipment = [
+
+
+
+      {
+        mainCategory: "스피커",
+        category: "라인어레이 스피커",
+        brand: "L-ACOUSTICS",
+        name: "K1",
+        summary: '3-way active, dual 15"',
+        image: "https://i.postimg.cc/RFfn2p4h/K1.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K1",
+          "특성": '3-way active, dual 15"',
+          "사용엠프": "LA12X / LA8",
+          "주파수응답특성": "35 Hz - 20 kHz",
+          "MAX SPL": "149 dB",
+          "커버리지": "수평: 90° / 수직: 0°, 0.5°, 1°, 1.5°, 2°, 2.5°, 3°, 4°, 5°",
+          "드라이버 구성": 'LF: 2 x 15", MF: 4 x 6.5", HF: 3 x 3"',
+          "임피던스": "LF: 2 × 8 Ω, MF: 8 Ω, HF: 8 Ω",
+          "무게": "106kg",
+          "크기(WxHxD)": "1342 x 438 x 520 mm",
+          "재고 수량": "24 ea",
+          "최대 리깅 수량": "24 ea",
+          "최대 스탁 수량": "X"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "라인어레이 스피커",
+        brand: "L-ACOUSTICS",
+        name: "K2",
+        summary: "3 way full range active",
+        image: "https://i.postimg.cc/Y0Hm7NCN/K2.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K2",
+          "특성": "3 way full range active",
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "35 Hz - 20 kHz",
+          "MAX SPL": "147 dB",
+          "커버리지": "수평: 110°/90°/70° / 수직: 0.25°, 1°, 2°, 3°, 4°, 5°, 7.5° or 10°",
+          "드라이버 구성": 'LF: 2 × 12", MF: 4 × 6.5", HF: 2 × 3"',
+          "임피던스": "LF: 2 × 8 Ω, MF: 8 Ω, HF: 16 Ω",
+          "무게": "56kg",
+          "크기(WxHxD)": "1338 x 354 x 400 mm",
+          "재고 수량": "36 ea",
+          "최대 리깅 수량": "24 ea",
+          "최대 스탁 수량": "6 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "라인어레이 스피커",
+        brand: "L-ACOUSTICS",
+        name: "KARA II",
+        summary: "2-way active",
+        image: "https://i.postimg.cc/26vBg9r6/KARA-II.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KARA II",
+          "특성": "2-way active",
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "55 Hz - 20 kHz",
+          "MAX SPL": "142 dB",
+          "커버리지": "수평: 110°/90°/70° / 수직: 0°, 1°, 2°, 3°, 4°, 5°, 7.5° or 10°",
+          "드라이버 구성": 'LF: 2 × 8", HF: 1 × 3"',
+          "임피던스": "LF: 8 Ω, HF: 8 Ω",
+          "무게": "26kg",
+          "크기(WxHxD)": "733 x 252 x 482 mm",
+          "재고 수량": "18 ea",
+          "최대 리깅 수량": "24 ea / 6 ea(다운필)",
+          "최대 스탁 수량": "9 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "컬럼어레이 스피커",
+        brand: "L-ACOUSTICS",
+        name: "SYVA",
+        summary: "2-way passive",
+        image: "https://i.postimg.cc/qRnCWD4h/SYVA.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "Syva",
+          "특성": "2-way passive",
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "87 Hz - 20 kHz",
+          "MAX SPL": "137 dB",
+          "커버리지": "수평: 140° / 수직: +5°/-21°",
+          "드라이버 구성": 'MF: 6 × 5", HF: 3 × 1.75"',
+          "임피던스": "8 Ω",
+          "무게": "21kg",
+          "크기(WxHxD)": "144 x 1301 X 209/170 mm",
+          "재고 수량": "2 ea",
+          "최대 리깅 수량": "1 ea",
+          "최대 스탁 수량": "1 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "라인소스 스피커",
+        brand: "L-ACOUSTICS",
+        name: "ARCS II",
+        summary: "Constant curvature WST enclosure",
+        image: "https://i.postimg.cc/D0TbhQwf/ARCS-II.jpg",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "ARCS II",
+          "특성": "Arrayable Radial Coherent System",
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "35 Hz - 20 kHz",
+          "MAX SPL": "149 dB",
+          "커버리지": "수평: 22.5° / 수직: +40° , -20° ",
+          "드라이버 구성": 'LF: 1 x 15", HF: 1 x 1.4"',
+          "임피던스":"LF: 8 Ω, HF: 8 Ω",
+          "무게": "57kg",
+          "크기(WxHxD)": "820 x 440 x 642 mm",
+          "재고 수량": "12 ea",
+          "최대 리깅 수량": "12 ea",
+          "최대 스탁 수량": "6 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "동축 스피커",
+        brand: "L-ACOUSTICS",
+        name: "X8",
+        summary: '2-way passive, 8"',
+        image: "https://i.postimg.cc/XqbyWKYV/X8.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "X8",
+          "특성": '2-way passive, 8"',
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "60 Hz - 20 kHz",
+          "MAX SPL": "129 dB",
+          "커버리지": "수평: 100° / 수직: 100°",
+          "드라이버 구성": 'LF: 1 x 8", HF: 1 x 1.5"',
+          "임피던스": "8 Ω",
+          "무게": "12kg",
+          "크기(WxHxD)": "250 x 424 x 164 mm",
+          "재고 수량": "8 ea",
+          "최대 리깅 수량": "1 ea",
+          "최대 스탁 수량": "1 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "라인어레이 스피커",
+        brand: "d&b audiotechnik",
+        name: "J8 / J12",
+        summary: "Large format 3-way passive",
+        image: "https://i.postimg.cc/8cSrGdzF/J8.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "J8 / J12",
+          "특성": "Large format 3-way passive",
+          "사용엠프": "D80 / D12",
+          "주파수응답특성": "48 Hz - 17 kHz",
+          "MAX SPL": "J8: 145 dB / J12: 143 dB",
+          "커버리지": "수평: J8 80° / J12 120°",
+          "드라이버 구성": 'LF: 2 x 12", MF: 1 x 10", HF: 2 x 1.4"',
+          "임피던스": "LF: 6 Ω, MF: 12 Ω, HF: 12 Ω",
+          "무게": "60kg",
+          "크기(WxHxD)": "1100 x 360 x 570 mm",
+          "재고 수량": "36 ea / 4ea",
+          "최대 리깅 수량": "24 ea",
+          "최대 스탁 수량": "6 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "서브 스피커",
+        brand: "L-ACOUSTICS",
+        name: "K1-SB",
+        summary: "K1 system subwoofer 2×15",
+        image: "https://i.postimg.cc/TwmWBNfY/K1-SB.jpg",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K1-SB",
+          "특성": "K1 system subwoofer 2×15",
+          "사용엠프": "LA12X",
+          "주파수응답특성": "30 Hz",
+          "MAX SPL": "145 dB",
+          "방사 패턴": "omni",
+          "드라이버 구성": '2 × 15"',
+          "임피던스": "4 Ω",
+          "무게": "83 kg",
+          "크기(WxHxD)": "1342 x 438 x 520 mm",
+          "재고 수량": "12 ea",
+          "최대 리깅 수량": "24 ea",
+          "최대 스탁 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "서브 스피커",
+        brand: "L-ACOUSTICS",
+        name: "KS28",
+        summary: "Reference high power subwoofer",
+        image: "https://i.postimg.cc/50vFDKbj/KS28.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KS28",
+          "특성": "Reference high power subwoofer",
+          "사용엠프": "LA12X",
+          "주파수응답특성": "25 Hz",
+          "MAX SPL": "143 dB",
+          "방사 패턴": "omni or cardioid",
+          "드라이버 구성": '2 × 18"',
+          "임피던스": "4 Ω",
+          "무게": "79 kg",
+          "크기(WxHxD)": "1340 x 565 x 719 mm",
+          "재고 수량": "30 ea",
+          "최대 리깅 수량": "16 ea",
+          "최대 스탁 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "서브 스피커",
+        brand: "L-ACOUSTICS",
+        name: "SB18",
+        summary: "High-power subwoofer",
+        image: "https://i.postimg.cc/TwmWBNfy/SB18.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "SB18",
+          "특성": "High-power subwoofer",
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "32 Hz",
+          "MAX SPL": "138 dB",
+          "방사 패턴": "omni or cardioid",
+          "드라이버 구성": '1 × 18"',
+          "임피던스": "8 Ω",
+          "무게": "62 kg",
+          "크기(WxHxD)": "759 x 543 x 717 mm",
+          "재고 수량": "4 ea",
+          "최대 리깅 수량": "16 ea",
+          "최대 스탁 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "서브 스피커",
+        brand: "L-ACOUSTICS",
+        name: "SYVA LOW",
+        summary: "Performance Art, Bass reflex",
+        image: "https://i.postimg.cc/6qXGKVpW/SYVA-SUB.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "SYVA LOW",
+          "특성": "Performance Art, Bass reflex",
+          "사용엠프": "LA12X / LA4X / LA8",
+          "주파수응답특성": "27 Hz",
+          "MAX SPL": "128 dB",
+          "방사 패턴": "omni",
+          "드라이버 구성": '1 × 12"',
+          "임피던스": "8 Ω",
+          "무게": "27 kg",
+          "크기(WxHxD)": "334 x 849 x 350 mm",
+          "재고 수량": "2 ea",
+          "최대 리깅 수량": "-",
+          "최대 스탁 수량": "1 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "서브 스피커",
+        brand: "d&b audiotechnik",
+        name: "J-SUB",
+        summary: "Large format flyable cardioid subwoofer",
+        image: "https://i.postimg.cc/8cSrGdz5/J-SUB.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "J-SUB",
+          "특성": "Large format flyable cardioid subwoofer",
+          "사용엠프": "D80 / D12",
+          "주파수응답특성": "32 Hz - 100 Hz",
+          "MAX SPL": "D80: 139 dB / D12: 138 dB",
+          "방사 패턴": "cardioid",
+          "드라이버 구성": '3 x 18"',
+          "임피던스": "Front: 4 Ω / Rear: 8 Ω",
+          "무게": "106 kg",
+          "크기(WxHxD)": "1100 x 540 x 1062 mm",
+          "재고 수량": "16 ea",
+          "최대 리깅 수량": "14 ea",
+          "최대 스탁 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "서브 스피커",
+        brand: "d&b audiotechnik",
+        name: "B2-SUB",
+        summary: "Double band pass subwoofer",
+        image: "https://i.postimg.cc/Kj2gb788/B2.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "B2-SUB",
+          "특성": "Double band pass subwoofer",
+          "사용엠프": "D80 / D12",
+          "주파수응답특성": "37 Hz - 90 Hz",
+          "MAX SPL": "139 dB",
+          "방사 패턴": "omni or cardioid",
+          "드라이버 구성": '2 × 18"',
+          "임피던스": "4 Ω",
+          "무게": "102 kg",
+          "크기(WxHxD)": "1160 x 580 x 1046 mm",
+          "재고 수량": "2 ea",
+          "최대 리깅 수량": "-",
+          "최대 스탁 수량": "-"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "동축 스피커",
+        brand: "d&b audiotechnik",
+        name: "M2",
+        summary: "2-way active",
+        image: "https://i.postimg.cc/90hq2PQw/M2.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "M2",
+          "특성": "2-way active",
+          "사용엠프": "D80 / D12",
+          "주파수응답특성": "57 Hz - 17 kHz",
+          "MAX SPL": "143 dB",
+          "커버리지": "수평: 45° / 수직: 60°",
+          "드라이버 구성": 'LF: 2 × 12", HF: 1 x 1.4"',
+          "임피던스": "LOW: 4 Ω, HIGH: 8 Ω",
+          "무게": "38 kg",
+          "크기(WxHxD)": "680 x 419 x 560 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "동축 스피커",
+        brand: "d&b audiotechnik",
+        name: "M4",
+        summary: "2-way passive / active",
+        image: "https://i.postimg.cc/d3YTFRVC/M4.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "M4",
+          "특성": "2-way passive / active",
+          "사용엠프": "D80 / D12 / D6",
+          "주파수응답특성": "55 Hz - 17 kHz",
+          "MAX SPL": "passive: 138 dB / active: 140 dB",
+          "커버리지": "수평: 50° / 수직: 70°",
+          "드라이버 구성": 'LF: 1 x 15", HF: 1 x 1.3"',
+          "임피던스": "8 Ω",
+          "무게": "20 kg",
+          "크기(WxHxD)": "580 x 360 x 505 mm",
+          "재고 수량": "16 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "동축 스피커",
+        brand: "d&b audiotechnik",
+        name: "M6",
+        summary: "2-way passive / active",
+        image: "https://i.postimg.cc/j2bJT6SJ/M6.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "M6",
+          "특성": "2-way passive / active",
+          "사용엠프": "D80 / D12 / D6",
+          "주파수응답특성": "65 Hz - 17 kHz",
+          "MAX SPL": "passive: 135 dB / active: 138 dB",
+          "커버리지": "수평: 50° / 수직: 80°",
+          "드라이버 구성": 'LF: 1 x 12", HF: 1 x 1.3"',
+          "임피던스": "8 Ω",
+          "무게": "16 kg",
+          "크기(WxHxD)": "486 x 321 x 455 mm",
+          "재고 수량": "6 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "동축 스피커",
+        brand: "d&b audiotechnik",
+        name: "MAX",
+        summary: "2-way passive / active",
+        image: "https://i.postimg.cc/Fz4JvbHc/MAX.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "MAX",
+          "특성": "2-way passive / active",
+          "사용엠프": "D80 / D12 / D6",
+          "주파수응답특성": "55 Hz - 18 kHz",
+          "MAX SPL": "passive: D6 131dB, D12/D80 135dB / active: D12/D80 136dB",
+          "커버리지": "수평: 60° / 수직: 60°",
+          "드라이버 구성": 'LF: 1 x 15", HF: 1 x 2"',
+          "임피던스": "8 Ω",
+          "무게": "26 kg",
+          "크기(WxHxD)": "536 x 392 x 507 mm",
+          "재고 수량": "62 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "동축 스피커",
+        brand: "d&b audiotechnik",
+        name: "Ci80",
+        summary: "2-way passive / active",
+        image: "https://i.postimg.cc/d3YTFRV0/CI80.webp",
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "Ci80",
+          "특성": "2-way passive / active",
+          "사용엠프": "D80 / D12 / D6",
+          "주파수응답특성": "70 Hz – 20 kHz",
+          "MAX SPL": "D6: 126 dB / D12,D80: 129 dB",
+          "커버리지": "수평: 85° / 수직: 85°",
+          "드라이버 구성": 'LF: 1 x 8", HF: 1 x 1"',
+          "임피던스": "16 Ω",
+          "무게": "7.8 kg",
+          "크기(WxHxD)": "240 x 352 x 205 mm",
+          "재고 수량": "10 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "모니터 스피커",
+        brand: "JBL",
+        name: "SRX712M",
+        summary: "2-way passive / active",
+        image: "https://i.postimg.cc/8cSrGdzB/SRX.png",
+        specs: {
+          "제조사": "JBL",
+          "제품명": "SRX712M",
+          "특성": "2-way passive / active",
+          "사용엠프": "D80 / D12 / D6 - LINEAR(preset)",
+          "주파수응답특성": "70 Hz - 20 kHz",
+          "MAX SPL": "131 dB",
+          "커버리지": "수평: 90° / 수직: 50°",
+          "드라이버 구성": 'LF: 1 x 12", HF: 1 x 3"',
+          "임피던스": "8 Ω",
+          "무게": "15 kg",
+          "크기(WxHxD)": "546 x 305 x 349 mm",
+          "재고 수량": "8 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "모니터 스피커",
+        brand: "JBL",
+        name: "EON15-G2",
+        summary: "2-way powered",
+        image: "https://i.postimg.cc/wMpsz5jD/EON.png",
+        specs: {
+          "제조사": "JBL",
+          "제품명": "EON15-G2",
+          "특성": "2-way powered",
+          "사용엠프": "내장 엠프",
+          "주파수응답특성": "39 Hz - 18 kHz",
+          "MAX SPL": "129 dB",
+          "커버리지": "수평: 90° / 수직: 60°",
+          "드라이버 구성": 'LF: 1 x 15", HF: 1 x 1.75"',
+          "임피던스": "-",
+          "무게": "21 kg",
+          "크기(WxHxD)": "430 x 686 x 444 mm",
+          "재고 수량": "30 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "모니터 스피커",
+        brand: "YAMAHA",
+        name: "MSP5",
+        summary: "2-way powered",
+        image: "https://i.postimg.cc/7hkT41ZV/MSP5.jpg",
+        specs: {
+          "제조사": "YAMAHA",
+          "제품명": "MSP5",
+          "특성": "2-way powered",
+          "사용엠프": "내장 엠프",
+          "주파수응답특성": "50 Hz - 40 kHz",
+          "MAX SPL": "101 dB",
+          "커버리지": "수평: 120° / 수직: 120°",
+          "드라이버 구성": 'LF: 1 x 5", HF: 1 x 1"',
+          "임피던스": "LF: 4 Ω, HF: 6 Ω",
+          "무게": "7.9 kg",
+          "크기(WxHxD)": "179 x 279 x 208 mm",
+          "재고 수량": "10 ea"
+        }
+      },
+      {
+        mainCategory: "스피커",
+        category: "모니터 스피커",
+        brand: "GENELEC",
+        name: "8330A",
+        summary: "2-way powered",
+        image: "https://i.postimg.cc/ZnSymP5K/GENELEC.png",
+        specs: {
+          "제조사": "GENELEC",
+          "제품명": "8330A",
+          "특성": "2-way powered",
+          "사용엠프": "내장 엠프",
+          "주파수응답특성": "45 Hz - 23 kHz",
+          "MAX SPL": "104 dB",
+          "커버리지": "수평: 120° / 수직: 120°",
+          "드라이버 구성": 'LF: 1 x 5", HF: 1 x 3/4"',
+          "임피던스": "-",
+          "무게": "5.1 kg",
+          "크기(WxHxD)": "189 x 299 x 178 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프",
+        brand: "L-ACOUSTICS",
+        name: "LA12X",
+        summary: "4 x 3300 W at 2.7 Ω",
+        image: "https://i.postimg.cc/JzM0h486/3DR-LA12X-Rear.png",
+        tags: ["K1", "K2", "KARA", "SYVA", "ARCS", "X8", "K1-SB", "KS28", "SB18", "SYVA LOW", "KARA II", "ARCS II"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "LA12X",
+          "아웃풋 파워": "4 x 3300 W at 2.7 Ω",
+          "인풋": "Milan-AVB, AES/EBU, Analog",
+          "파워": "16 A for 200-240 V",
+          "파워커넥터": "32 A powerCON",
+          "아웃단자": "2 × 4-point speakON, 1 × 8-point CA-COM",
+          "레이턴시": "Analog and AES/EBU : standard 3.84 ms / low latency 0.84 ms | Milan-AVB : Maximum network 2 ms",
+          "무게": "14.5 kg",
+          "높이": "2U",
+          "크기(WxHxD)": "483 x 442.7 x 88 mm",
+          "재고 수량": "45 ea"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프",
+        brand: "L-ACOUSTICS",
+        name: "LA4X",
+        summary: "4 x 1000 W at 4 and 8 Ω",
+        image: "https://i.postimg.cc/Bn4bvQ3m/LA4X-Rear-1.webp",
+        tags: ["K2", "KARA", "SYVA", "ARCS", "X8", "SB18", "SYVA LOW", "KARA II", "ARCS II"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "LA4X",
+          "아웃풋 파워": "4 x 1000 W at 4 and 8 Ω",
+          "인풋": "Milan-AVB, AES/EBU, Analog",
+          "파워": "10 A for 200-240 V",
+          "파워커넥터": "16 A powerCON",
+          "아웃단자": "4 × 4-point speakON",
+          "레이턴시": "Analog and AES/EBU : standard 3.84 ms / low latency 0.84 ms | Milan-AVB : Maximum network 2 ms",
+          "무게": "14.5 kg",
+          "높이": "2U",
+          "크기(WxHxD)": "483 x 442.7 x 88 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프",
+        brand: "L-ACOUSTICS",
+        name: "LA8",
+        summary: "4 × 1800 W at 4 Ω and 2.7 Ω",
+        tags: ["K1", "K2", "KARA", "SYVA", "ARCS", "X8", "K1-SB", "SB18", "SYVA LOW", "KARA II", "ARCS II"],
+        image: "https://i.postimg.cc/rwMspFTH/l-acoustics-la8.png",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "LA8",
+          "아웃풋 파워": "4 × 1800 W at 4 Ω and 2.7 Ω",
+          "인풋": "AES/EBU, Analog",
+          "파워": "16 A for 200-240 V",
+          "파워커넥터": "220 PLUG",
+          "아웃단자": "2 × 4-point speakON, 1 × 8-point CA-COM",
+          "레이턴시": "Analog and AES/EBU : standard 3.84 ms / low latency 1.18 ms",
+          "무게": "12.2 kg",
+          "높이": "2U",
+          "크기(WxHxD)": "483 x 427.6 x 88 mm",
+          "재고 수량": "3 ea"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프",
+        brand: "d&b audiotechnik",
+        name: "D80",
+        summary: "4 × 2600 W / 2000 W at 4 Ω / 8 Ω",
+        image: "https://i.postimg.cc/2Sry58YJ/D80.webp",
+        tags: ["J8", "J12", "J-SUB", "B2-SUB", "M2", "M4", "M6", "M6", "MAX", "CI80"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "D80",
+          "아웃풋 파워": "4 × 2600 W / 2000 W at 4 Ω / 8 Ω",
+          "인풋": "AES/EBU, Analog",
+          "파워": "16 A for 200-240 V",
+          "파워커넥터": "32 A powerCON",
+          "아웃단자": "4 × 4-point speakON, 1 × 8-point speakON",
+          "레이턴시": "Analog and AES/EBU : 0.3 ms",
+          "무게": "19 kg",
+          "높이": "2U",
+          "크기(WxHxD)": "442.5 x 530.5 x 88 mm",
+          "재고 수량": "19 ea"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프 랙/악세서리",
+        brand: "L-ACOUSTICS",
+        name: "LA-RAK II AVB",
+        summary: "Three-phase 32 A IEC in/link",
+        image: "https://i.postimg.cc/pLRrdXv1/LA-RAK-II-AVB.webp",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "LA-RAK II AVB",
+          "파워": "Three-phase 32 A IEC in/link",
+          "무게": "100 kg",
+          "크기(WxHxD)": "609 x 580 x 513 mm",
+          "최대 리깅 수량": "4 ea",
+          "최대 스탁 수량": "3 ea",
+          "재고 수량": "15 ea"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프 랙/악세서리",
+        brand: "L-ACOUSTICS",
+        name: "Coupling bar",
+        summary: "1.5 kg",
+        image: "",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "Coupling bar",
+          "무게": "1.5 kg",
+          "재고 수량": "-"
+        }
+      },
+      {
+        mainCategory: "엠프",
+        category: "엠프 랙/악세서리",
+        brand: "L-ACOUSTICS",
+        name: "Dolly board",
+        summary: "14 kg",
+        image: "",
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "Dolly board",
+          "무게": "14 kg",
+          "크기(WxHxD)": "609 x 580 x 146 mm",
+          "재고 수량": "-"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K1-BPCHAIN",
+        summary: "Adjustable sling for K1-BUMP,K2-BUMP",
+        image: "https://i.postimg.cc/0yFRrVRW/K1-BPCHAIN.jpg",
+        tags: ["K1-BUMP", "K2-BUMP", "K1-BPCHAIN"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K1-BPCHAIN",
+          "설명": "Adjustable sling for K1-BUMP,K2-BUMP",
+          "무게": "6.3 kg",
+          "크기(WxHxD)": "1370 mm (길이)",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K1-BUMP",
+        summary: "Structure for fying and stacking K1 and K1-SB arrays",
+        image: "https://i.postimg.cc/XYmSXsSg/K1-BUMP.jpg",
+        tags: ["K1", "K2-LINK", "KARA-DOWNK1", "K1-SB", "K1-BUMP"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K1-BUMP",
+          "설명": "Structure for fying and stacking K1 and K1-SB arrays",
+          "무게": "98 kg",
+          "크기(WxHxD)": "1327 x 1266 x 351 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K1-CHARIOT",
+        summary: "Chariot for 4 × K1 or 4 × K1-SB",
+        image: "https://i.postimg.cc/2SMR30NN/K1-CHARIOT.jpg",
+        tags: ["K1", "K1-SB", "K1-CHARIOT"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K1-CHARIOT",
+          "설명": "Chariot for 4 × K1 or 4 × K1-SB",
+          "무게": "47 kg",
+          "크기(WxHxD)": "1450 x 610 x 280 mm",
+          "재고 수량": "10 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K1-DELTA",
+        summary: "Rigging accessory for rear attachment of 2 motors to K1-BUMP,K2-BUMP",
+        image: "https://i.postimg.cc/kgz3DT3v/K1-DELTA.png",
+        tags: ["K1-BUMP", "K2-BUMP", "K1-DELTA"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K1-DELTA",
+          "설명": "Rigging accessory for rear attachment of 2 motors to K1-BUMP,K2-BUMP",
+          "무게": "9.5 kg",
+          "크기(WxHxD)": "606 x 304 x 48 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "KARA-DOWNK1",
+        summary: "Flying bumper for rigging KARA (II) under K1 or K1-SB",
+        image: "https://i.postimg.cc/XYmSXs6S/KARA-DOWNK1.jpg",
+        tags: ["K1", "K1-SB", "KARA II", "KARA-DOWNK1"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KARA-DOWNK1",
+          "설명": "Flying bumper for rigging KARA (II) under K1 or K1-SB",
+          "무게": "21 kg",
+          "크기(WxHxD)": "1330 x 512 x 117 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K2-LINK",
+        summary: "Rigging accessory for rear attachment of K2 below K1",
+        image: "https://i.postimg.cc/526WxZGG/K2-LINK.png",
+        tags: ["K1", "K1-SB", "K2", "K2-LINK"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K2-LINK",
+          "설명": "Rigging accessory for rear attachment of K2 below K1",
+          "무게": "1.8 kg",
+          "크기(WxHxD)": "307 x 201 x 10 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K-BUMPFLIGHT",
+        summary: "Modular fight case for 2 K1-BUMP or 2 K2-BUMP 12 pieces of adhesive foam",
+        image: "https://i.postimg.cc/Dw832tDM/K1-Bum-Flight.jpg",
+        tags: ["K1-BUMP", "K2-BUMP", "KARA-DOWNK1", "KARA-DOWNK2", "K1-BPCHAIN", "K1-DELTA", "K2-LINK", "K-BUMPFLIGHT"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K-BUMPFLIGHT",
+          "설명": "Modular fight case for 2 K1-BUMP or 2 K2-BUMP",
+          "무게": "105 kg",
+          "크기(WxHxD)": "1469 x 643 x 1224 mm",
+          "재고 수량": "1 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K2-BUMP",
+        summary: "Structure for fying K2 arrays",
+        image: "https://i.postimg.cc/cL2y6FGN/K2-BUMP.png",
+        tags: ["K1", "K1-SB", "K2", "K2-BUMP"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K2-BUMP",
+          "설명": "Structure for fying K2 arrays",
+          "무게": "42.3 kg",
+          "크기(WxHxD)": "1387 x 520 x 115 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K2-BAR",
+        summary: "Extension bar for K2-BUMP",
+        image: "https://i.postimg.cc/HkRDj6Df/K2-BAR.png",
+        tags: ["K2-BUMP", "K2-BAR"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K2-BAR",
+          "설명": "Extension bar for K2-BUMP",
+          "무게": "17 kg",
+          "크기(WxHxD)": "1254 x 215 x 78 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "K2-CHARIOT",
+        summary: "Chariot for 4 K2",
+        image: "https://i.postimg.cc/YCZKjdKd/K2-CHARIOT.png",
+        tags: ["K2", "K2-CHARIOT"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "K2-CHARIOT",
+          "설명": "Chariot for 4 K2",
+          "무게": "50 kg",
+          "크기(WxHxD)": "1450 x 610 x 285 mm",
+          "재고 수량": "9 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "KARADOWNK2",
+        summary: "Flying bumper for rigging Kara under K2",
+        image: "https://i.postimg.cc/13f19LTJ/KARADOWNK2.png",
+        tags: ["K2", "KARA II", "KARADOWNK2"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KARADOWNK2",
+          "설명": "Flying bumper for rigging Kara under K2",
+          "무게": "17 kg",
+          "크기(WxHxD)": "1330 x 452 x 90 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "M-BUMP",
+        summary: "Bumper for flying or stacking KARA/SB18",
+        image: "https://i.postimg.cc/K8wS40S6/M-BUMP.png",
+        tags: ["KARA II", "SB18", "M-BUMP"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "M-BUMP",
+          "설명": "Bumper for flying or stacking KARA/SB18",
+          "무게": "25 kg",
+          "크기(WxHxD)": "750 x 700 x 80 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "M-BAR",
+        summary: "Extension bar for rigging frame",
+        image: "https://i.postimg.cc/L8wKhxKG/M-BAR.png",
+        tags: ["M-BUMP", "M-BAR"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "M-BAR",
+          "설명": "Extension bar for rigging frame",
+          "무게": "5 kg",
+          "크기(WxHxD)": "954 x 60 x 112 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "KARA-ANGARMEX",
+        summary: "2 angle bar extension for KARA bumper",
+        image: "https://i.postimg.cc/x1hDq6Dh/KARA-ANGARMEX.png",
+        tags: ["M-BUMP", "KARA II", "KARA-ANGARMEX"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KARA-ANGARMEX",
+          "설명": "2 angle bar extension for KARA bumper",
+          "무게": "0.6 kg",
+          "크기(WxHxD)": "80.3 x 122.6 x 33 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "KS28-BUMP",
+        summary: "Lifting beam for fying up to 16 x KS28",
+        image: "https://i.postimg.cc/13f19LTB/KS28-BUMP.png",
+        tags: ["KS28", "KS28-BUMP"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KS28-BUMP",
+          "설명": "Lifting beam for fying up to 16 x KS28",
+          "무게": "15.5 kg",
+          "크기(WxHxD)": "1340 x 100 x 81 mm",
+          "재고 수량": "2 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "KS28-CHARIOT",
+        summary: "Chariot for up to 4 x KS28",
+        image: "https://i.postimg.cc/Nj5vgWV4/KS28-CHARIOT.png",
+        tags: ["KS28", "KS28-CHARIOT"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KS28-CHARIOT",
+          "설명": "Chariot for up to 4 x KS28",
+          "무게": "53.5 kg",
+          "크기(WxHxD)": "1450 x 813 x 230 mm",
+          "재고 수량": "8 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "KS28-PLA",
+        summary: "Removable front dolly on wheels for 1 x KS28",
+        image: "https://i.postimg.cc/pLpM2g7J/KS28-PLA.png",
+        tags: ["KS28", "KS28-PLA"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "KS28-PLA",
+          "설명": "Removable front dolly on wheels for 1 x KS28",
+          "무게": "14 kg",
+          "크기(WxHxD)": "1340 x 550 x 146 mm",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "L-ACOUSTICS",
+        name: "LA-RAK BUMP",
+        summary: "Structure for flying 4 LA-RAK",
+        image: "https://i.postimg.cc/FHNzKsvP/LA-RAK-BUMP.png",
+        tags: ["LA-RAK II AVB", "LA-RAK BUMP"],
+        specs: {
+          "제조사": "L-ACOUSTICS",
+          "제품명": "LA-RAK BUMP",
+          "설명": "Structure for flying 4 LA-RAK",
+          "무게": "13.5 kg",
+          "크기(WxHxD)": "581 x 558 x 103 mm",
+          "재고 수량": "재고 없음"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "d&b audiotechnik",
+        name: "Z5300",
+        summary: "J Flying frame",
+        image: "https://i.postimg.cc/qvzHk9Y3/Z5300-J-BUMPER.png",
+        tags: ["J8", "J12", "JSUB", "J-SUB", "Z5300"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "Z5300",
+          "설명": "J Flying frame",
+          "무게": "66kg",
+          "크기(WxHxD)": "-",
+          "재고 수량": "6 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "d&b audiotechnik",
+        name: "Z5305",
+        summary: "J Hoist connector chain",
+        image: "https://i.postimg.cc/9QrHWvSP/Z5305.png",
+        tags: ["Z5300", "Z5305"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "Z5305",
+          "설명": "J Hoist connector chain",
+          "무게": "-",
+          "크기(WxHxD)": "-",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "d&b audiotechnik",
+        name: "Z5303",
+        summary: "J Safety chain",
+        image: "https://i.postimg.cc/zGVYJ9Mn/Z5303.png",
+        tags: ["Z5300", "Z5303"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "Z5303",
+          "설명": "J Safety chain",
+          "무게": "-",
+          "크기(WxHxD)": "-",
+          "재고 수량": "4 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "d&b audiotechnik",
+        name: "E7910",
+        summary: "J-SUB Wooden lid",
+        image: "https://i.postimg.cc/QdHZXRP9/E7910-J-SUB-Wooden-lid.jpg",
+        tags: ["J-SUB", "JSUB", "E7910"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "E7910",
+          "설명": "J-SUB Wooden lid",
+          "무게": "-",
+          "크기(WxHxD)": "-",
+          "재고 수량": "15 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "d&b audiotechnik",
+        name: "E7919",
+        summary: "J Wheel board",
+        image: "https://i.postimg.cc/2SVNzPJW/E7919-J-Wheelboard.jpg",
+        tags: ["J8", "J12", "E7919"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "E7919",
+          "설명": "J Wheel board",
+          "무게": "-",
+          "크기(WxHxD)": "-",
+          "재고 수량": "40 ea"
+        }
+      },
+      {
+        mainCategory: "악세사리",
+        category: "악세사리",
+        brand: "d&b audiotechnik",
+        name: "E7911",
+        summary: "B2-SUB Wooden lid",
+        image: "https://i.postimg.cc/vZcwQpj1/E7911-B2-B22-SUB-Wooden-lid.jpg",
+        tags: ["B2", "E7911"],
+        specs: {
+          "제조사": "d&b audiotechnik",
+          "제품명": "E7911",
+          "설명": "B2-SUB Wooden lid",
+          "무게": "-",
+          "크기(WxHxD)": "-",
+          "재고 수량": "2 ea"
+        }
+      }
+    ];
+
+    const cart = {};
+    let currentCategory = "";
+    let currentBrand = "";
+
+    function parseWeight(weightStr) {
+      if (!weightStr) return 0;
+      const match = String(weightStr).match(/[\d.]+/);
+      return match ? parseFloat(match[0]) : 0;
+    }
+
+    function updateQuantity(productName, delta) {
+      const currentQty = cart[productName] || 0;
+      const newQty = Math.max(0, currentQty + delta);
+      
+      if (newQty === 0) {
+        delete cart[productName];
+      } else {
+        cart[productName] = newQty;
+      }
+
+      document.querySelectorAll(`.qty-input[data-name="${CSS.escape(productName)}"]`).forEach(input => {
+        input.value = newQty;
+      });
+
+      calculateTotalLoad();
+      if (!document.getElementById("load-modal").classList.contains("hidden")) {
+        openLoadListModal();
+      }
+    }
+
+    function setQuantity(productName, value) {
+      const newQty = Math.max(0, parseInt(value, 10) || 0);
+      if (newQty === 0) {
+        delete cart[productName];
+      } else {
+        cart[productName] = newQty;
+      }
+      
+      document.querySelectorAll(`.qty-input[data-name="${CSS.escape(productName)}"]`).forEach(input => {
+        input.value = newQty;
+      });
+
+      calculateTotalLoad();
+      if (!document.getElementById("load-modal").classList.contains("hidden")) {
+        openLoadListModal();
+      }
+    }
+
+    function calculateTotalLoad() {
+      let totalWeight = 0;
+      let totalCount = 0;
+
+      for (const [name, qty] of Object.entries(cart)) {
+        const item = equipment.find(e => e.name === name);
+        if (item && item.specs["무게"]) {
+          const unitWeight = parseWeight(item.specs["무게"]);
+          totalWeight += unitWeight * qty;
+          totalCount += qty;
+        }
+      }
+
+      const formattedWeight = totalWeight.toLocaleString('ko-KR', { maximumFractionDigits: 1 });
+      document.getElementById("total-weight").textContent = formattedWeight;
+      document.getElementById("selected-count").textContent = totalCount;
+      
+      document.querySelectorAll(".modal-total-weight").forEach(el => el.textContent = formattedWeight);
+      document.querySelectorAll(".modal-total-qty").forEach(el => el.textContent = totalCount);
+    }
+
+    function createQuantityControlHtml(item) {
+      const qty = cart[item.name] || 0;
+      return `
+        <div class="quantity-control" onclick="event.stopPropagation()">
+          <button class="quantity-btn" onclick="updateQuantity('${item.name}', -1)">-</button>
+          <input type="number" class="quantity-input qty-input" data-name="${item.name}" value="${qty}" min="0" onchange="setQuantity('${item.name}', this.value)">
+          <button class="quantity-btn" onclick="updateQuantity('${item.name}', 1)">+</button>
+        </div>
+      `;
+    }
+
+    function showCategories() {
+      document.getElementById("category-view").classList.remove("hidden");
+      document.getElementById("brand-view").classList.add("hidden");
+      document.getElementById("product-view").classList.add("hidden");
+      document.getElementById("detail-view").classList.add("hidden");
+      document.getElementById("manual-view").classList.add("hidden");
+      document.getElementById("product-manual-view").classList.add("hidden");
+      document.getElementById("angle-picker-view").classList.add("hidden");
+      document.getElementById("delay-calc-view").classList.add("hidden");
+      const cv = document.getElementById("creator-view");
+      if (cv) cv.classList.add("hidden");
+
+      // 메인 화면: 사용자가 켜둔 경우에만 하중 바 표시
+      applyLoadBarPreference();
+
+      document.getElementById("search-input").value = "";
+      document.getElementById("category-list").classList.remove("hidden");
+      document.getElementById("search-result").classList.add("hidden");
+
+      // 하단 버튼 다시 보이기
+      const bottomBtns = document.getElementById("bottom-manual-buttons");
+      if (bottomBtns) bottomBtns.classList.remove("hidden");
+
+
+
+
+
+
+      const list = document.getElementById("category-list");
+      list.innerHTML = "";
+
+      mainCategories.forEach(cat => {
+        const count = equipment.filter(item => item.mainCategory === cat).length;
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <div class="card-clickable" onclick="showBrands('${cat}')">
+            <div class="card-content">
+              <div class="card-title">${cat}</div>
+              <div class="card-sub">${count}개 제품 등록됨</div>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function hideAllViews() {
+      ["category-view","brand-view","product-view","detail-view","manual-view","product-manual-view","angle-picker-view","delay-calc-view","creator-view"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+    }
+
+
+    // 메뉴얼 URL → 보기(PDF.js) / 다운로드 링크 변환
+    function extractDriveFileId(url) {
+      if (!url) return null;
+      const m = String(url).match(/\/d\/([a-zA-Z0-9_-]+)/) || String(url).match(/[?&]id=([a-zA-Z0-9_-]+)/);
+      return m ? m[1] : null;
+    }
+
+    // GitHub blob/view 주소를 raw 주소로 변환
+    function toGitHubRawUrl(url) {
+      if (!url) return url;
+      // 이미 raw면 그대로
+      if (url.includes("raw.githubusercontent.com")) return url;
+      // blob 또는 github.com 파일 페이지 → raw
+      // 예: https://github.com/user/repo/blob/main/file.pdf
+      //  → https://raw.githubusercontent.com/user/repo/main/file.pdf
+      const m = url.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)\/(?:blob|raw)\/([^\/]+)\/(.+)$/);
+      if (m) {
+        return `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`;
+      }
+      return url;
+    }
+
+    function getManualLinks(url) {
+      if (!url || !url.trim()) {
+        return { view: "#", download: "#" };
+      }
+
+      // 1) Google Drive
+      const driveId = extractDriveFileId(url);
+      if (driveId) {
+        const direct = `https://drive.google.com/uc?export=download&id=${driveId}`;
+        return {
+          view: `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent("https://drive.google.com/file/d/" + driveId + "/preview")}`,
+          download: direct
+        };
+      }
+
+      // 2) GitHub 등 일반 PDF URL → Raw 후 PDF.js로 보기
+      const rawUrl = toGitHubRawUrl(url);
+      return {
+        view: `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(rawUrl)}`,
+        download: rawUrl
+      };
+    }
+
+
+    function createManualCard(item) {
+      const div = document.createElement("div");
+      div.className = "manual-card";
+
+      let btnsHtml = "";
+
+      // 여러 파트 (예: K1 1–61 / 62–142)
+      if (item.parts && item.parts.length > 0) {
+        item.parts.forEach(part => {
+          const links = getManualLinks(part.url);
+          btnsHtml += `
+            <a class="manual-open-badge" href="${links.view}" target="_blank" rel="noopener noreferrer">보기 ${part.label || ""}</a>
+            <a class="manual-open-badge download" href="${links.download}" target="_blank" rel="noopener noreferrer">다운 ${part.label || ""}</a>
+          `;
+        });
+      } else {
+        const hasUrl = !!(item.url && item.url.trim());
+        if (hasUrl) {
+          const links = getManualLinks(item.url);
+          btnsHtml = `
+            <a class="manual-open-badge" href="${links.view}" target="_blank" rel="noopener noreferrer">보기</a>
+            <a class="manual-open-badge download" href="${links.download}" target="_blank" rel="noopener noreferrer">다운로드</a>
+          `;
+        } else {
+          btnsHtml = `<span class="manual-open-badge" style="background:#ccc;pointer-events:none;">링크 없음</span>`;
+        }
+      }
+
+      div.innerHTML = `
+        <div>
+          <div class="manual-card-title">${item.name}</div>
+          <div class="manual-card-sub">${item.subtitle || ""}</div>
+        </div>
+        <div class="manual-btns">${btnsHtml}</div>
+      `;
+      return div;
+    }
+
+
+    function showManuals() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.getElementById("manual-view").classList.remove("hidden");
+
+      const list = document.getElementById("manual-list");
+      list.innerHTML = "";
+
+      riggingManuals.forEach(group => {
+        const header = document.createElement("div");
+        header.className = "brand-header";
+        header.textContent = group.brand;
+        list.appendChild(header);
+
+        group.items.forEach(item => {
+          list.appendChild(createManualCard(item));
+        });
+      });
+    }
+
+    function showProductManuals() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.getElementById("product-manual-view").classList.remove("hidden");
+
+      const list = document.getElementById("product-manual-list");
+      list.innerHTML = "";
+
+      let hasAny = false;
+      productManuals.forEach(group => {
+        if (group.items.length === 0) return;
+        hasAny = true;
+
+        const header = document.createElement("div");
+        header.className = "brand-header";
+        header.textContent = group.brand;
+        list.appendChild(header);
+
+        group.items.forEach(item => {
+          list.appendChild(createManualCard(item));
+        });
+      });
+
+      if (!hasAny) {
+        list.innerHTML = `<div class="empty-message">등록된 제품 메뉴얼이 없습니다.<br>나중에 PDF 링크를 추가해 주세요.</div>`;
+      }
+    }
+
+
+    function showAnglePicker() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.getElementById("angle-picker-view").classList.remove("hidden");
+      selectedAngle = null;
+
+
+      const grid = document.getElementById("angle-select-grid");
+      grid.innerHTML = "";
+      const startBtn = document.getElementById("start-angle-camera-btn");
+      startBtn.disabled = true;
+      startBtn.textContent = "📷 선택한 각도로 카메라 실행";
+
+      commonAngles.forEach(deg => {
+        const btn = document.createElement("button");
+        btn.className = "angle-btn";
+        btn.textContent = deg + "°";
+        btn.onclick = () => {
+          selectedAngle = deg;
+          document.querySelectorAll(".angle-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          startBtn.disabled = false;
+          startBtn.textContent = `📷 ${deg}° 카메라 실행`;
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    const delayHumorList = [
+      "일지도..",
+      "일까나..",
+      "일려나..",
+      "거리는 레이저로 측정한거지..?",
+      "눈으로 거리를 대충본건 아니지..?",
+      "줄자로 거리 잰거지..?"
+    ];
+
+    // 하중 바: 기본 숨김, 메인에서 토글로만 표시
+    let loadBarUserOn = false;
+
+    function setLoadBarVisible(visible) {
+      const bar = document.getElementById("load-summary-bar") || document.querySelector(".load-summary-bar");
+      if (bar) {
+        if (visible) bar.classList.remove("hidden");
+        else bar.classList.add("hidden");
+      }
+    }
+
+    function updateLoadToggleBtn() {
+      document.querySelectorAll(".load-toggle-btn-main").forEach(btn => {
+        if (loadBarUserOn) {
+          btn.textContent = "하중리스트 가리기";
+          btn.classList.add("on");
+        } else {
+          btn.textContent = "하중리스트 보기";
+          btn.classList.remove("on");
+        }
+      });
+    }
+
+
+    function showCreator() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.getElementById("creator-view").classList.remove("hidden");
+      // 들어올 때마다 다시 접힌 상태로
+      document.querySelectorAll("#creator-view .patch-body").forEach(el => {
+        el.classList.add("collapsed");
+      });
+      document.querySelectorAll("#creator-view .patch-more-btn").forEach(btn => {
+        btn.textContent = "더보기";
+      });
+      const br = document.getElementById("botari-result");
+      if (br) {
+        br.textContent = "아직 안 열었어요…";
+        br.classList.add("empty");
+      }
+      const ascii = document.getElementById("botari-ascii");
+      if (ascii) ascii.textContent = BOTARI_ASCII_CLOSED;
+    }
+
+    function togglePatchBody(btn) {
+      const item = btn.closest(".patch-item");
+      if (!item) return;
+      const body = item.querySelector(".patch-body");
+      if (!body) return;
+      const open = body.classList.contains("collapsed");
+      if (open) {
+        body.classList.remove("collapsed");
+        btn.textContent = "접기";
+      } else {
+        body.classList.add("collapsed");
+        btn.textContent = "더보기";
+      }
+    }
+
+    const BOTARI_ASCII_CLOSED =
+`  ################
+  # Hyundae sound#
+  #  LINE  TONG  #
+  #  [ ]    [ ]  #
+  ################
+    O          O`;
+
+    const BOTARI_ASCII_OPEN =
+`                 ##
+           ##
+     ##
+  ##
+  # Hyundae sound#
+  #  LINE  TONG  #
+  #  [ ]    [ ]  #
+  ################
+    O          O`;
+
+    // ★ 잔소리 추가/수정은 여기 배열에
+    const botariLines = [
+      '그럼에도 불구하고 귀를 믿자.',
+      '거리는 레이저로 측정한 거지..?',
+      '줄자로 잰 거지..?',
+      '리깅 메뉴얼은 읽으라고 있는 거다. (진짜로)',
+      '하중 계산 안 하고 올리면 모터가 먼저 운다.',
+      '메뉴얼 PDF는 받아서 보라. 스트리밍은 느리다.',
+      '광 뚜껑은 닫았니?',
+      '줄자는 흰색면으로 보고있니?',
+      '리던던트 파워있는 장비들은 두개다 전원이 들아오니?(UPS 확인)',
+      '왼손으로 감은 케이블 오른손으로 감아둔거와 합치지는 않았지?',
+      '녹음 포멧은 확인했니?',
+      '렉경첩을 열었으면 다시 잠궜니?',
+      '파리채 안테나 연결시 LED는 확인했니?',
+      '장비들 깔깔이는 다 제대로 쳤니?',
+      '카디오이드 서브 리버스통이 1번으로 연결했니?',
+      '공연시작전에 핸드폰 무음모드 했니?',
+      'KARA,K2는 범프 와 1번째 통은 5도여야 플랫이다.',
+      'RF MUTE는 하고 키는거지?',
+      'AA배터리 방향은 맞지?',
+      '단도리 할 비닐을 챙겼어?',
+      '바인더끈은?',
+      '광케이블은 챙겼어?',
+      '워크벤치용 노트북도 챙겼지?',
+      '이치에 맞지 않다면 기본부터 점검하라',
+      'AC코드는 챙겼어?',
+      'AC코드는 끝까지 밀어 넣었어?',
+      '리깅하고 형광 테잎이 보이는 렛치는 없지?',
+      '디스트리뷰션 안테나 인,캐스케이드 아웃은 안 헷갈렸지?',
+      '로드 체크는 돌렸니?',
+      '음향 30년 까지 앞으로 19년 남았다.',
+      '명단에 대표님도 넣었지?',
+      'M BAR 대신에 K2 BAR챙긴건 아니지?',
+      '샤클은 언제나 충분한 갯수로…',
+      '슬링 하중물은 샤클 사용을…',
+      '샤클 체결전 손으로 꽉 잠그기…',
+      'M BAR는 시작이 1부터가아닌 0부터 시작…',
+      '9월부터는 새우가 제철이다…',
+      '바위굴 과 삼베체굴은 여름에도 노로바이러스 걱정없이 먹을수있다.',
+      '커버는 벗김 과 동시에 정리를..',
+      '장갑은 꼈지?',
+      '안전화는..?',
+      'J-SUB 는 포인트별로 최소60cm 띄어야 카디오이드가 만들어진다.',
+      '라인 어레이 스피커는 최소통수가 있어야 로우가 나오기 시작한다.',
+      'K2 BUMP 에도 K1,K1-SUB 적은통수로 체결할수있다.',
+      'ARCS II 는 만능이다.',
+      '모터는 철수시 체인을 제발 꼭 끝까지 빼놔야 다음이 편하다.',
+      '내가 다음에 안사용하겠지라는 마인드는 언젠가는 되돌아온다.',
+      '사고를 치면 일단 보고를..',
+      '뮤뱅 점심은 틈새라면이 국룰이다.',
+      '급할수록 뛰어라.',
+      '의외로 이승찬 과장은 키가 크다.',
+      '사람의 손바닥에 가장 긴길이는 23cm 이다 (제작자기준) 이것으로 길이를 어림잡을수있다.',
+      '렉 이동시 등뒤에 암살자를 조심하라. (아킬레스건 조심)',
+      '의외로 SD9 과 SD10 에 무게차이는 20kg 밖에 나지 않는다',
+      '숫자를 맹신하지 마라.'
+    ];
+
+    let botariDeck = [];
+
+    function shuffleBotariDeck() {
+      botariDeck = botariLines.slice();
+      for (let i = botariDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const t = botariDeck[i];
+        botariDeck[i] = botariDeck[j];
+        botariDeck[j] = t;
+      }
+    }
+
+    function openBotari() {
+      const ascii = document.getElementById("botari-ascii");
+      if (ascii) ascii.textContent = BOTARI_ASCII_OPEN;
+      const el = document.getElementById("botari-result");
+      if (!el || !botariLines.length) return;
+      if (!botariDeck.length) shuffleBotariDeck();
+      const line = botariDeck.pop();
+      el.textContent = line;
+      el.classList.remove("empty");
+    }
+
+
+
+
+    function toggleLoadBar() {
+      loadBarUserOn = !loadBarUserOn;
+      updateLoadToggleBtn();
+      setLoadBarVisible(loadBarUserOn);
+    }
+
+    function applyLoadBarPreference() {
+      updateLoadToggleBtn();
+      setLoadBarVisible(loadBarUserOn);
+    }
+
+    function showDelayCalc() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.getElementById("delay-calc-view").classList.remove("hidden");
+      calcDelay();
+    }
+
+
+
+    function calcDelay() {
+      const ff = parseFloat(document.getElementById("delay-ff").value);
+      const main = parseFloat(document.getElementById("delay-main").value);
+      const resultEl = document.getElementById("delay-result");
+      const humorEl = document.getElementById("delay-humor");
+
+      if (isNaN(ff) || isNaN(main) || ff < 0 || main < 0) {
+        resultEl.textContent = "—";
+        humorEl.textContent = "";
+        return;
+      }
+
+      // 음속 343 m/s → 1m ≈ 2.915 ms
+      const diff = main - ff;
+      if (diff <= 0) {
+        resultEl.textContent = "0.0";
+        humorEl.textContent = diff < 0 ? "MAIN이 더 가깝다고..?" : "거리가 같음";
+        return;
+      }
+
+      const ms = diff / 0.343; // = diff * 1000 / 343
+      resultEl.textContent = ms.toFixed(1);
+      humorEl.textContent = delayHumorList[Math.floor(Math.random() * delayHumorList.length)];
+    }
+
+    function startAngleCamera(overrideAngle) {
+
+      const angle = overrideAngle != null ? overrideAngle : selectedAngle;
+      if (angle == null) {
+        alert("각도를 먼저 선택해주세요.");
+        return;
+      }
+
+      const modal = document.getElementById("angle-camera-modal");
+      const video = document.getElementById("angle-video");
+      const label = document.getElementById("angle-cam-label");
+
+      label.textContent = angle + "°";
+      modal.classList.remove("hidden");
+
+      // 가로 모드 잠금 시도 (지원 브라우저에서만 동작)
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape").catch(() => {});
+        } else if (screen.lockOrientation) {
+          screen.lockOrientation("landscape");
+        } else if (screen.mozLockOrientation) {
+          screen.mozLockOrientation("landscape");
+        } else if (screen.msLockOrientation) {
+          screen.msLockOrientation("landscape");
+        }
+      } catch (e) {}
+
+      // 전체화면 시도 (가로 전환에 도움이 됨)
+      try {
+        const el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      } catch (e) {}
+
+      navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false
+      }).then(stream => {
+        angleStream = stream;
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          video.play();
+          resizeAngleCanvas();
+          drawAngleLines(angle);
+        };
+      }).catch(err => {
+        console.error(err);
+        alert("카메라에 접근할 수 없습니다.\n권한을 허용해주세요. (HTTPS 또는 localhost에서만 동작합니다)");
+        stopAngleCamera();
+      });
+
+      window.addEventListener("resize", onAngleResize);
+      window.addEventListener("orientationchange", onAngleResize);
+    }
+
+    function onAngleResize() {
+      setTimeout(() => {
+        resizeAngleCanvas();
+        const deg = parseFloat(document.getElementById("angle-cam-label").textContent);
+        if (!isNaN(deg)) drawAngleLines(deg);
+      }, 100);
+    }
+
+    function resizeAngleCanvas() {
+      const canvas = document.getElementById("angle-canvas");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function drawAngleLines(deg) {
+      const canvas = document.getElementById("angle-canvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // 원점: 화면 하단 중앙 (스피커 위치를 가정)
+      const ox = w / 2;
+      const oy = h * 0.88;
+
+      const half = (deg * Math.PI) / 180 / 2;
+      const len = Math.max(w, h) * 1.2;
+
+      // 좌측 / 우측 선
+      const x1 = ox - Math.sin(half) * len;
+      const y1 = oy - Math.cos(half) * len;
+      const x2 = ox + Math.sin(half) * len;
+      const y2 = oy - Math.cos(half) * len;
+
+      // 센터선 (각도 이등분선)
+      const xc = ox;
+      const yc = oy - len;
+
+      ctx.lineCap = "round";
+      ctx.shadowColor = "rgba(0,0,0,0.6)";
+      ctx.shadowBlur = 4;
+
+      // 좌/우 경계선 (시안)
+      ctx.strokeStyle = "rgba(0, 200, 255, 0.95)";
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(x1, y1);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      // 센터선 (흰색 점선)
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 8]);
+      ctx.beginPath();
+      ctx.moveTo(ox, oy);
+      ctx.lineTo(xc, yc);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 중심 점
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.arc(ox, oy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0, 200, 255, 0.95)";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 각도 호
+      const arcR = Math.min(w, h) * 0.18;
+      ctx.beginPath();
+      ctx.arc(ox, oy, arcR, -Math.PI/2 - half, -Math.PI/2 + half);
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 각도 텍스트
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 22px -apple-system, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(deg + "°", ox, oy - arcR - 16);
+    }
+
+    function stopAngleCamera() {
+      if (angleStream) {
+        angleStream.getTracks().forEach(t => t.stop());
+        angleStream = null;
+      }
+      if (angleAnimId) {
+        cancelAnimationFrame(angleAnimId);
+        angleAnimId = null;
+      }
+      const video = document.getElementById("angle-video");
+      if (video) video.srcObject = null;
+      document.getElementById("angle-camera-modal").classList.add("hidden");
+      window.removeEventListener("resize", onAngleResize);
+      window.removeEventListener("orientationchange", onAngleResize);
+
+      // 가로 잠금 해제
+      try {
+        if (screen.orientation && screen.orientation.unlock) {
+          screen.orientation.unlock();
+        }
+      } catch (e) {}
+
+      // 전체화면 해제
+      try {
+        if (document.fullscreenElement && document.exitFullscreen) {
+          document.exitFullscreen().catch(() => {});
+        } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      } catch (e) {}
+    }
+
+
+    function showBrands(cat) {
+      currentCategory = cat;
+      hideAllViews();
+      applyLoadBarPreference();
+      document.getElementById("brand-view").classList.remove("hidden");
+
+      document.getElementById("category-title").textContent = cat;
+
+
+
+      const catEquipment = equipment.filter(item => item.mainCategory === cat);
+      const brands = [...new Set(catEquipment.map(item => item.brand))];
+      const list = document.getElementById("brand-list");
+      list.innerHTML = "";
+
+      if (brands.length === 0) {
+        list.innerHTML = `<div class="empty-message">등록된 브랜드 및 제품이 없습니다</div>`;
+        return;
+      }
+
+      brands.forEach(brand => {
+        const count = catEquipment.filter(item => item.brand === brand).length;
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <div class="card-clickable" onclick="showProducts('${brand}')">
+            <div class="card-content">
+              <div class="card-title">${brand}</div>
+              <div class="card-sub">${count}개 제품 보유</div>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function showProducts(brand) {
+      currentBrand = brand;
+      hideAllViews();
+      applyLoadBarPreference();
+      document.getElementById("product-view").classList.remove("hidden");
+
+      document.getElementById("product-title").textContent = brand;
+
+      const list = document.getElementById("product-list");
+      list.innerHTML = "";
+
+      equipment
+        .filter(item => item.mainCategory === currentCategory && item.brand === brand)
+        .forEach(item => {
+          const div = document.createElement("div");
+          div.className = "card";
+
+          const imgHtml = item.image
+            ? `<img src="${item.image}" alt="${item.name}" onerror="this.outerHTML='<div class=\\'no-image\\'>사진 없음</div>'">`
+            : `<div class="no-image">사진 없음</div>`;
+
+          div.innerHTML = `
+            <div class="card-clickable" onclick='showDetail(${JSON.stringify(item)})'>
+              ${imgHtml}
+              <div class="card-content">
+                <div class="card-title">${item.name}</div>
+                <div class="card-sub">[${item.category}] · ${item.summary}</div>
+                <div style="font-size: 12px; color: #0071e3; margin-top: 2px;">개당 무게: ${item.specs["무게"] || '정보없음'}</div>
+              </div>
+            </div>
+            ${createQuantityControlHtml(item)}
+          `;
+          list.appendChild(div);
+        });
+    }
+
+    function showDetail(item) {
+      hideAllViews();
+      applyLoadBarPreference();
+      document.getElementById("detail-view").classList.remove("hidden");
+
+
+      currentCategory = item.mainCategory;
+      currentBrand = item.brand;
+
+      document.getElementById("detail-name").textContent = item.name;
+      document.getElementById("detail-brand").textContent = `${item.brand} · ${item.category}`;
+
+      const img = document.getElementById("detail-image");
+      if (item.image) {
+        img.src = item.image;
+        img.classList.remove("hidden");
+      } else {
+        img.classList.add("hidden");
+      }
+
+      const specsDiv = document.getElementById("detail-specs");
+      specsDiv.innerHTML = "";
+
+      for (const [label, value] of Object.entries(item.specs)) {
+        const div = document.createElement("div");
+        div.className = "spec-item";
+
+        // 커버리지 항목이면 수평각을 클릭 가능하게 만들기
+        if (label === "커버리지" && value) {
+          const angles = extractHorizontalAngles(value);
+          let valueHtml = value;
+          if (angles.length > 0) {
+            // 각 각도를 클릭 가능한 링크로 변환
+            angles.forEach(a => {
+              const re = new RegExp(a + "°", "g");
+              valueHtml = valueHtml.replace(re, `<span class="clickable-coverage" onclick="startAngleCamera(${a})">${a}°</span>`);
+            });
+          }
+          div.innerHTML = `
+            <div class="spec-label">${label} <span style="font-size:11px;color:#0071e3;">(각도 클릭 → 카메라)</span></div>
+            <div class="spec-value">${valueHtml}</div>
+          `;
+        } else {
+          div.innerHTML = `
+            <div class="spec-label">${label}</div>
+            <div class="spec-value">${value}</div>
+          `;
+        }
+        specsDiv.appendChild(div);
+      }
+    }
+
+    // 스펙 문자열에서 수평 각도 숫자들 추출
+    function extractHorizontalAngles(text) {
+      const result = [];
+      // "수평: 110°/90°/70°" 또는 "수평: J8 80° / J12 120°" 형태 처리
+      const horizMatch = text.match(/수평[^/]*?([\d.]+°(?:\s*[\/,]\s*[\d.]+°)*)/);
+      if (horizMatch) {
+        const nums = horizMatch[1].match(/[\d.]+/g);
+        if (nums) nums.forEach(n => {
+          const v = parseFloat(n);
+          if (!isNaN(v) && !result.includes(v)) result.push(v);
+        });
+      } else {
+        // fallback: 모든 ° 앞 숫자
+        const all = text.match(/([\d.]+)°/g);
+        if (all) all.forEach(s => {
+          const v = parseFloat(s);
+          if (!isNaN(v) && !result.includes(v)) result.push(v);
+        });
+      }
+      return result;
+    }
+
+
+    function handleSearch() {
+      const keyword = document.getElementById("search-input").value.trim().toLowerCase();
+      const categoryList = document.getElementById("category-list");
+      const resultList = document.getElementById("search-result");
+      const bottomBtns = document.getElementById("bottom-manual-buttons");
+
+      if (!keyword) {
+        categoryList.classList.remove("hidden");
+        resultList.classList.add("hidden");
+        if (bottomBtns) bottomBtns.classList.remove("hidden");
+        return;
+      }
+
+      categoryList.classList.add("hidden");
+      resultList.classList.remove("hidden");
+      if (bottomBtns) bottomBtns.classList.add("hidden");
+      resultList.innerHTML = "";
+
+
+      const filtered = equipment.filter(item =>
+        item.name.toLowerCase().includes(keyword) ||
+        item.brand.toLowerCase().includes(keyword) ||
+        item.category.toLowerCase().includes(keyword) ||
+        item.mainCategory.toLowerCase().includes(keyword) ||
+        item.summary.toLowerCase().includes(keyword) ||
+        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(keyword))) ||
+        Object.values(item.specs).some(val => String(val).toLowerCase().includes(keyword))
+      );
+
+      if (filtered.length === 0) {
+        resultList.innerHTML = `<div class="empty-message">검색 결과가 없습니다</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const imgHtml = item.image
+          ? `<img src="${item.image}" alt="${item.name}" onerror="this.outerHTML='<div class=\\'no-image\\'>사진 없음</div>'">`
+          : `<div class="no-image">사진 없음</div>`;
+
+        div.innerHTML = `
+          <div class="card-clickable" onclick='showDetail(${JSON.stringify(item)})'>
+            ${imgHtml}
+            <div class="card-content">
+              <div class="card-title">${item.name}</div>
+              <div class="card-sub">${item.brand} · [${item.mainCategory} > ${item.category}] · ${item.summary}</div>
+              <div style="font-size: 12px; color: #0071e3; margin-top: 2px;">개당 무게: ${item.specs["무게"] || '정보없음'}</div>
+            </div>
+          </div>
+          ${createQuantityControlHtml(item)}
+        `;
+        resultList.appendChild(div);
+      });
+    }
+
+    /* 엑셀 양식 모달 오픈 및 테이블 채우기 */
+    function openLoadListModal() {
+      const tbody = document.getElementById("excel-table-body");
+      const planTbody = document.getElementById("plan-table-body");
+      const emptyMsg = document.getElementById("modal-empty-msg");
+      
+      tbody.innerHTML = "";
+      planTbody.innerHTML = "";
+
+      const keys = Object.keys(cart);
+      if (keys.length === 0) {
+        emptyMsg.classList.remove("hidden");
+      } else {
+        emptyMsg.classList.add("hidden");
+        let index = 1;
+        keys.forEach(name => {
+          const qty = cart[name];
+          const item = equipment.find(e => e.name === name);
+          const unitWeight = parseWeight(item ? item.specs["무게"] : 0);
+          const dimension = item && item.specs["크기(WxHxD)"] ? item.specs["크기(WxHxD)"] : "-";
+          const usage = item ? `${item.mainCategory}` : "";
+          const subtotal = unitWeight * qty;
+
+          // 장비 LIST 행
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${index}</td>
+            <td style="font-weight:600; text-align:left;">${name}</td>
+            <td style="font-size:11px; font-family:monospace;">${dimension}</td>
+            <td>${createQuantityControlHtml(item)}</td>
+            <td>ea</td>
+            <td>${unitWeight}</td>
+            <td style="font-weight:600;">${subtotal.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}</td>
+            <td>${usage}</td>
+          `;
+          tbody.appendChild(tr);
+
+          // 하중 분산 계획 행
+          const planTr = document.createElement("tr");
+          planTr.innerHTML = `
+            <td>${index}</td>
+            <td style="font-weight:600; text-align:left;">${name}</td>
+            <td style="font-size:11px; font-family:monospace;">${dimension}</td>
+            <td>${qty}</td>
+            <td>ea</td>
+            <td>${unitWeight}</td>
+            <td style="font-weight:600;">${subtotal.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}</td>
+            <td></td>
+          `;
+          planTbody.appendChild(planTr);
+
+          index++;
+        });
+      }
+
+      document.getElementById("load-modal").classList.remove("hidden");
+    }
+
+    function closeLoadListModal() {
+      document.getElementById("load-modal").classList.add("hidden");
+    }
+
+    function resetCart() {
+      if (confirm("선택된 하중리스트를 전체 초기화하시겠습니까?")) {
+        for (const key in cart) delete cart[key];
+        calculateTotalLoad();
+        closeLoadListModal();
+        if (!document.getElementById("product-view").classList.contains("hidden")) {
+          showProducts(currentBrand);
+        }
+      }
+    }
+
+    /* SheetJS 및 수식을 활용한 고품질 엑셀 파일 다운로드 기능 */
+    function exportToExcel() {
+      const keys = Object.keys(cart);
+      if (keys.length === 0) {
+        alert("다운로드할 데이터가 없습니다.");
+        return;
+      }
+
+      const workbook = XLSX.utils.book_new();
+      const ws = {};
+      const merges = [];
+
+      // 유틸리티 함수: 셀 설정
+      function setCell(r, c, v, f = null) {
+        const cellRef = XLSX.utils.encode_cell({ r: r, c: c });
+        const cell = { v: v };
+        if (typeof v === 'number') {
+          cell.t = 'n';
+        } else if (typeof v === 'boolean') {
+          cell.t = 'b';
+        } else {
+          cell.t = 's';
+        }
+        if (f) {
+          cell.f = f; // 엑셀 수식 적용
+        }
+        ws[cellRef] = cell;
+      }
+
+      // 1. 헤더 영역 (장비 하중 리스트 & 메타 정보)
+      setCell(0, 0, "장비 하중\n리스트");
+      merges.push({ s: { r: 0, c: 0 }, e: { r: 7, c: 2 } });
+
+      const labels = ["공 연 명", "업 체 명", "담 당 자", "반입(반출)장소", "반 입 일 시", "반 출 일 시", "반입(반출)목적", "총 전기 사용량"];
+      labels.forEach((label, idx) => {
+        setCell(idx, 3, label);
+        setCell(idx, 4, "");
+        merges.push({ s: { r: idx, c: 4 }, e: { r: idx, c: 7 } });
+      });
+
+      // 2. 장비 LIST 영역
+      let r = 9;
+      setCell(r, 0, "※ 장비 L I S T ※");
+      merges.push({ s: { r: r, c: 0 }, e: { r: r, c: 7 } });
+      r++;
+
+      const headers = ["No.", "품 명", "규 격 (mm)", "수량", "단위", "무게 (kg)", "합계 (kg)", "용 도"];
+      headers.forEach((h, idx) => setCell(r, idx, h));
+      r++;
+
+      const listStartRow = r + 1; // 1-based index for Excel
+      let listIndex = 1;
+
+      keys.forEach(name => {
+        const qty = cart[name];
+        const item = equipment.find(e => e.name === name);
+        const unitWeight = parseWeight(item ? item.specs["무게"] : 0);
+        const dimension = item && item.specs["크기(WxHxD)"] ? item.specs["크기(WxHxD)"] : "-";
+        const usage = item ? item.mainCategory : "";
+        const currentRowNum = r + 1;
+
+        setCell(r, 0, listIndex++);
+        setCell(r, 1, name);
+        setCell(r, 2, dimension);
+        setCell(r, 3, qty);
+        setCell(r, 4, "ea");
+        setCell(r, 5, unitWeight);
+        // 합계 수식 적용 (수량 * 무게)
+        setCell(r, 6, qty * unitWeight, `D${currentRowNum}*F${currentRowNum}`);
+        setCell(r, 7, usage);
+        r++;
+      });
+
+      const listEndRow = r; // 1-based index
+
+      // 장비 LIST 합계 행
+      setCell(r, 0, "합 계 (kg)");
+      merges.push({ s: { r: r, c: 0 }, e: { r: r, c: 2 } });
+      setCell(r, 3, 0, `SUM(D${listStartRow}:D${listEndRow})`); // 수량 합계
+      setCell(r, 4, "ea");
+      setCell(r, 5, "-");
+      setCell(r, 6, 0, `SUM(G${listStartRow}:G${listEndRow})`); // 하중 합계
+      setCell(r, 7, "");
+      r += 2;
+
+      // 3. 하중 분산 계획 영역
+      setCell(r, 0, "※ 하 중 분 산 계 획 ※");
+      merges.push({ s: { r: r, c: 0 }, e: { r: r, c: 7 } });
+      r++;
+
+      const planHeaders = ["No.", "품 명", "규 격 (mm)", "수량", "단위", "무게 (kg)", "합계 (kg)", "설치 방법 또는 설치 위치"];
+      planHeaders.forEach((h, idx) => setCell(r, idx, h));
+      r++;
+
+      const planStartRow = r + 1;
+      let planIndex = 1;
+
+      keys.forEach(name => {
+        const qty = cart[name];
+        const item = equipment.find(e => e.name === name);
+        const unitWeight = parseWeight(item ? item.specs["무게"] : 0);
+        const dimension = item && item.specs["크기(WxHxD)"] ? item.specs["크기(WxHxD)"] : "-";
+        const currentRowNum = r + 1;
+
+        setCell(r, 0, planIndex++);
+        setCell(r, 1, name);
+        setCell(r, 2, dimension);
+        setCell(r, 3, qty);
+        setCell(r, 4, "ea");
+        setCell(r, 5, unitWeight);
+        // 합계 수식 적용 (수량 * 무게)
+        setCell(r, 6, qty * unitWeight, `D${currentRowNum}*F${currentRowNum}`);
+        setCell(r, 7, "");
+        r++;
+      });
+
+      const planEndRow = r;
+
+      // 하중 분산 계획 합계 행
+      setCell(r, 0, "합 계 (kg)");
+      merges.push({ s: { r: r, c: 0 }, e: { r: r, c: 2 } });
+      setCell(r, 3, 0, `SUM(D${planStartRow}:D${planEndRow})`);
+      setCell(r, 4, "ea");
+      setCell(r, 5, "-");
+      setCell(r, 6, 0, `SUM(G${planStartRow}:G${planEndRow})`);
+      setCell(r, 7, "");
+
+      // 메타데이터 및 속성 설정
+      ws['!ref'] = XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: r, c: 7 } });
+      ws['!merges'] = merges;
+      ws['!cols'] = [
+        { wch: 8 },  // No.
+        { wch: 22 }, // 품명
+        { wch: 25 }, // 규격
+        { wch: 10 }, // 수량
+        { wch: 8 },  // 단위
+        { wch: 12 }, // 무게
+        { wch: 14 }, // 합계
+        { wch: 26 }  // 용도 / 위치
+      ];
+
+      XLSX.utils.book_append_sheet(workbook, ws, "장비하중리스트");
+
+      const today = new Date().toISOString().slice(0, 10);
+      XLSX.writeFile(workbook, `장비_하중리스트_${today}.xlsx`);
+    }
+    showCategories();
+  </script>
+</body>
+</html>
