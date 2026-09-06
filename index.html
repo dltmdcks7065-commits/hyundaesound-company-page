@@ -20,6 +20,7 @@
       max-width: 800px;
       margin: 0 auto;
     }
+    body.truck-wide .container { max-width: 1100px; }
     h1 { font-size: 24px; margin-bottom: 8px; }
     .subtitle { color: #86868b; margin-bottom: 20px; font-size: 14px; }
     .search-box { margin-bottom: 20px; }
@@ -375,6 +376,316 @@
 
 
 
+
+    /* 용차 계산기 */
+
+    .truck-add-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+    .truck-add-row select { width: 100%; margin-bottom: 0; }
+    .truck-add-fleet-btn {
+      flex-shrink: 0;
+      border: none;
+      background: #0071e3;
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .truck-fleet-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .truck-fleet-tab {
+      border: none;
+      background: #f2f2f7;
+      color: #1d1d1f;
+      border-radius: 10px;
+      padding: 6px 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-height: 36px;
+    }
+    .truck-fleet-tab small { display: none; }
+    .truck-fleet-tab.on {
+      background: #0071e3;
+      color: #fff;
+      border-color: #0071e3;
+    }
+    .truck-fleet-tab.on small { color: rgba(255,255,255,0.7); }
+    .truck-fleet-tab .x {
+      margin-left: auto;
+      flex-shrink: 0;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 800;
+      opacity: 0.85;
+      padding: 0 4px;
+    }
+    .truck-plans { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 8px 0 10px; }
+    .truck-plan {
+      border: none;
+      background: #f2f2f7;
+      border-radius: 10px;
+      padding: 10px 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .truck-plan.on { background: #1d1d1f; color: #fff; }
+    .truck-plan b { display: block; font-size: 16px; }
+    .truck-plan span { display: block; font-size: 10px; color: #86868b; margin-top: 4px; }
+    .truck-plan.on span { color: rgba(255,255,255,0.65); }
+
+
+
+    .rta-peak {
+      background: #1d1d1f;
+      color: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .rta-hz { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
+    .rta-note { color: #86868b; font-size: 13px; margin-top: 4px; }
+    .rta-stage {
+      display: grid;
+      grid-template-columns: 1fr 52px;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 12px;
+    }
+    .rta-canvas-wrap {
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #rta-canvas { display: block; width: 100%; height: 260px; }
+    .rta-fader-col {
+      background: #1d1d1f;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+    .rta-fader-label { color: #fff; font-size: 10px; font-weight: 700; }
+    .rta-fader {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 28px;
+      height: 160px;
+      accent-color: #0071e3;
+    }
+    .rta-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .rta-controls button {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .rta-param-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .rta-param-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .rta-param-title { font-size: 13px; font-weight: 800; }
+    .rta-param-sub { font-size: 11px; color: #86868b; }
+    .rta-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .rta-step {
+      border: none;
+      background: #f2f2f7;
+      color: #1d1d1f;
+      border-radius: 10px;
+      padding: 10px 0 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .rta-step small {
+      display: block;
+      font-size: 9px;
+      font-weight: 600;
+      color: #86868b;
+      margin-top: 2px;
+    }
+    .rta-step.on {
+      background: #1d1d1f;
+      color: #fff;
+    }
+    .rta-step.on small { color: rgba(255,255,255,0.65); }
+    .rta-step.atk.on { background: #0071e3; }
+    .rta-step.rel.on { background: #ff9f0a; color: #1d1d1f; }
+    .rta-step.rel.on small { color: rgba(0,0,0,0.5); }
+    .rta-start { background: #0071e3; color: #fff; }
+    .rta-stop { background: #ff3b30; color: #fff; }
+    .rta-hint { font-size: 13px; color: #86868b; line-height: 1.5; }
+
+
+    .truck-mode-row { display: flex; gap: 8px; margin: 8px 0 12px; }
+    .truck-mode-btn {
+      flex: 1;
+      border: 1px solid #d2d2d7;
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .truck-mode-btn.on { background: #1d1d1f; color: #fff; border-color: #1d1d1f; }
+    @media print {
+      body * { visibility: hidden !important; }
+      #truck-report-print, #truck-report-print * { visibility: visible !important; }
+      #truck-report-print { position: absolute; left: 0; top: 0; width: 100%; background: #fff; }
+    }
+    .truck-auto-btn {
+      width: 100%;
+      margin: 8px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #0071e3;
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    #truck-calc-view h1 { font-size: 20px; margin-bottom: 4px; }
+    .truck-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      grid-template-areas:
+        "toolbar sidebar"
+        "tabs    sidebar"
+        "size    sidebar"
+        "bed     sidebar"
+        "list    sidebar";
+      gap: 10px 14px;
+      align-items: start;
+    }
+    .truck-toolbar { grid-area: toolbar; }
+    .truck-fleet-tabs { grid-area: tabs; }
+    .truck-size-label { grid-area: size; }
+    .truck-canvas-wrap { grid-area: bed; }
+    .truck-loaded { grid-area: list; }
+    .truck-right {
+      grid-area: sidebar;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      position: sticky;
+      top: 8px;
+    }
+    @media (max-width: 800px) {
+      .truck-layout {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "toolbar"
+          "tabs"
+          "sidebar"
+          "size"
+          "bed"
+          "list";
+      }
+      .truck-right { position: static; max-height: none; }
+    }
+    .truck-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d2d2d7;
+      font-size: 15px;
+      margin-bottom: 8px;
+      background: white;
+    }
+    .truck-size-label {
+      font-size: 13px;
+      color: #86868b;
+      margin-bottom: 10px;
+    }
+    .truck-canvas-wrap {
+      background: #fff;
+      border-radius: 12px;
+      padding: 8px;
+      overflow: auto;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    #truck-canvas { display: block; margin: 0 auto; max-width: 100%; }
+    .truck-item-card {
+      background: white;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      text-align: left;
+    }
+    .truck-item-name { font-size: 13px; font-weight: 700; }
+    .truck-item-dim { font-size: 11px; color: #86868b; }
+    .truck-add-btn {
+      margin-top: 6px;
+      width: 100%;
+      border: none;
+      background: #0071e3;
+      color: white;
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .truck-loaded { font-size: 13px; margin-top: 10px; }
+    .truck-loaded-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 10px;
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+    .truck-mini-btn {
+      border: none;
+      background: #eee;
+      border-radius: 6px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    @media (max-width: 700px) {
+      .truck-layout { flex-direction: column; }
+      .truck-right { width: 100%; max-height: none; }
+    }
+
     .creator-footer {
       text-align: center;
       color: #86868b;
@@ -541,6 +852,21 @@
       text-align: center;
     }
     .manual-btn-main:active { background: #333; }
+    #bottom-manual-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    #bottom-manual-buttons .manual-btn-main {
+      margin: 0;
+      padding: 14px 10px;
+      font-size: 14px;
+    }
+    #bottom-manual-buttons .creator-btn {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+    }
 
     .brand-header {
       font-size: 15px;
@@ -794,16 +1120,107 @@
       <div id="search-result" class="hidden"></div>
 
       <div id="bottom-manual-buttons">
-        <button class="manual-btn-main" onclick="showManuals()">📖 리깅 메뉴얼 보기</button>
-        <button class="manual-btn-main" onclick="showProductManuals()" style="margin-top: 10px;">📄 제품 메뉴얼 보기</button>
-        <button class="manual-btn-main" onclick="showAnglePicker()" style="margin-top: 10px;">📐 커버리지 각도 뷰어</button>
-        <button class="manual-btn-main" onclick="showDelayCalc()" style="margin-top: 10px;">⏱️ 딜레이 계산기</button>
+        <button class="manual-btn-main" onclick="showManuals()">📖 리깅 메뉴얼</button>
+        <button class="manual-btn-main" onclick="showProductManuals()">📄 제품 메뉴얼</button>
+        <button class="manual-btn-main" onclick="showAnglePicker()">📐 각도 뷰어</button>
+        <button class="manual-btn-main" onclick="showDelayCalc()">⏱️ 딜레이 계산기</button>
+        <button class="manual-btn-main" onclick="showTruckCalc()">🚚 용차 계산기</button>
+        <button class="manual-btn-main" onclick="showRta()">📊 RTA 피드백</button>
         <button class="creator-btn" onclick="showCreator()">✦ 제작자 / 패치노트</button>
       </div>
     </div>
 
 
 
+
+
+    <!-- 용차 계산기 -->
+
+    <div id="rta-view" class="hidden">
+      <button class="back-btn" onclick="stopRta(); showCategories();">← 카테고리 목록</button>
+      <h1>RTA 피드백 찾기</h1>
+      <p class="subtitle">모니터 피드백 포인트 찾기</p>
+      <div class="rta-peak">
+        <div class="rta-hz" id="rta-hz">— Hz</div>
+        <div class="rta-note" id="rta-note">마이크를 켜세요</div>
+        <div class="rta-note" id="rta-last" style="margin-top:8px;color:#ffd60a;">마지막 피드백: —</div>
+      </div>
+      <div class="rta-stage">
+        <div class="rta-canvas-wrap">
+          <canvas id="rta-canvas" width="720" height="260"></canvas>
+        </div>
+        <div class="rta-fader-col">
+          <div class="rta-fader-label" id="rta-gain-label">+4 dB</div>
+          <input id="rta-gain" class="rta-fader" type="range" min="0" max="40" value="16" oninput="setRtaGain()">
+          <div class="rta-fader-label">MIC</div>
+        </div>
+      </div>
+      <select id="rta-device" class="truck-select" onchange="startRta()"></select>
+      <div class="rta-param-card">
+        <div class="rta-param-head">
+          <div class="rta-param-title">어택</div>
+          <div class="rta-param-sub" id="rta-attack-label">3 보통</div>
+        </div>
+        <input type="hidden" id="rta-attack" value="0.857">
+        <div class="rta-steps" id="rta-attack-steps">
+          <button type="button" class="rta-step atk" data-v="0.464" data-l="1 빠름" onclick="setRtaStep('attack', this)">1<small>빠름</small></button>
+          <button type="button" class="rta-step atk" data-v="0.726" data-l="2" onclick="setRtaStep('attack', this)">2<small> </small></button>
+          <button type="button" class="rta-step atk on" data-v="0.857" data-l="3 보통" onclick="setRtaStep('attack', this)">3<small>보통</small></button>
+          <button type="button" class="rta-step atk" data-v="0.926" data-l="4" onclick="setRtaStep('attack', this)">4<small> </small></button>
+          <button type="button" class="rta-step atk" data-v="0.962" data-l="5 느림" onclick="setRtaStep('attack', this)">5<small>느림</small></button>
+        </div>
+      </div>
+      <div class="rta-param-card">
+        <div class="rta-param-head">
+          <div class="rta-param-title">릴리즈</div>
+          <div class="rta-param-sub" id="rta-release-label">3 보통</div>
+        </div>
+        <input type="hidden" id="rta-release" value="0.9950">
+        <div class="rta-steps" id="rta-release-steps">
+          <button type="button" class="rta-step rel" data-v="0.9851" data-l="1 빠름" onclick="setRtaStep('release', this)">1<small>빠름</small></button>
+          <button type="button" class="rta-step rel" data-v="0.9925" data-l="2" onclick="setRtaStep('release', this)">2<small> </small></button>
+          <button type="button" class="rta-step rel on" data-v="0.9950" data-l="3 보통" onclick="setRtaStep('release', this)">3<small>보통</small></button>
+          <button type="button" class="rta-step rel" data-v="0.9962" data-l="4" onclick="setRtaStep('release', this)">4<small> </small></button>
+          <button type="button" class="rta-step rel" data-v="0.9970" data-l="5 느림" onclick="setRtaStep('release', this)">5<small>느림</small></button>
+        </div>
+      </div>
+      <div class="rta-controls">
+        <button type="button" class="rta-start" onclick="startRta()">다시 켜기</button>
+        <button type="button" class="rta-stop" onclick="stopRta()">끄기</button>
+      </div>
+    </div>
+
+    <div id="truck-calc-view" class="hidden">
+      <button class="back-btn" onclick="showCategories()">← 카테고리 목록</button>
+      <h1>용차계산기 (컴퓨터 전용사이즈)</h1>
+      <div class="truck-mode-row">
+        <button type="button" class="truck-mode-btn on" id="truck-mode-manual" onclick="setTruckMode('manual')">수동 모드</button>
+        <button type="button" class="truck-mode-btn" id="truck-mode-auto" onclick="setTruckMode('auto')">자동 모드</button>
+      </div>
+      <p class="subtitle" id="truck-mode-sub">장비를 개별클릭하면 회전합니다. 드래그하면 자리가 바뀝니다.</p>
+      <div class="truck-layout">
+        <div class="truck-left">
+          <div class="truck-add-row truck-toolbar">
+            <select class="truck-select" id="truck-type"></select>
+            <button type="button" class="truck-add-fleet-btn" onclick="addFleetTruck()">용차 추가</button>
+          </div>
+          <div class="truck-fleet-tabs" id="truck-fleet-tabs"></div>
+          <div class="truck-size-label" id="truck-size-label"></div>
+          <div class="truck-canvas-wrap">
+            <canvas id="truck-canvas" width="360" height="640"></canvas>
+          </div>
+          <div class="truck-loaded" id="truck-loaded-list"></div>
+        </div>
+        <div class="truck-right">
+          <div id="truck-score-box"></div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:8px;">장비 선택</div>
+          <input type="text" id="truck-search" placeholder="장비 검색..." oninput="filterTruckCatalog()" style="width:100%;padding:8px 10px;border:1px solid #d2d2d7;border-radius:8px;margin-bottom:8px;font-size:13px;">
+          <button type="button" class="truck-auto-btn hidden" id="truck-calc-btn" onclick="optimizeTruckLoad()">최적 적재 계산</button>
+          <div class="truck-plans" id="truck-plans"></div>
+          <div id="truck-item-list"></div>
+        </div>
+      </div>
+    </div>
 
     <!-- 리깅 메뉴얼 목록 화면 -->
     <div id="manual-view" class="hidden">
@@ -929,7 +1346,7 @@
               <div class="patch-line head">v1.1.1 — 2026.08.28</div>
               <div class="patch-line">• 현대음향 장비 스펙시트 개설</div>
               <div class="patch-line">• 스피커 22종 추가</div>
-              <div class="patch-line">• 앰프 7종 추가</div>
+              <div class="patch-line">• 엠프 7종 추가</div>
               <div class="patch-line">• 악세사리 24종 추가</div>
               <div class="patch-line">• 장비 하중 계산기 기능 추가</div>
               <div class="patch-line head">v1.2.85 — 2026.09.04</div>
@@ -1148,7 +1565,7 @@
   </div>
 
   <script>
-    const mainCategories = ["스피커", "앰프", "악세사리", "마이크", "콘솔", "아웃보드"];
+    const mainCategories = ["스피커", "엠프", "악세사리", "마이크", "콘솔", "아웃보드"];
 
     // 리깅 메뉴얼 목록 (외부 PDF 링크)
     // ★ 아래 url 값을 실제 PDF 주소로 교체하세요 (Google Drive, Dropbox, 회사 서버 등)
@@ -1226,7 +1643,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "K1",
           "특성": '3-way active, dual 15"',
-          "사용앰프": "LA12X / LA8",
+          "사용엠프": "LA12X / LA8",
           "주파수응답특성": "35 Hz - 20 kHz",
           "MAX SPL": "149 dB",
           "커버리지": "수평: 90° / 수직: 0°, 0.5°, 1°, 1.5°, 2°, 2.5°, 3°, 4°, 5°",
@@ -1250,7 +1667,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "K2",
           "특성": "3 way full range active",
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "35 Hz - 20 kHz",
           "MAX SPL": "147 dB",
           "커버리지": "수평: 110°/90°/70° / 수직: 0.25°, 1°, 2°, 3°, 4°, 5°, 7.5° or 10°",
@@ -1274,7 +1691,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "KARA II",
           "특성": "2-way active",
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "55 Hz - 20 kHz",
           "MAX SPL": "142 dB",
           "커버리지": "수평: 110°/90°/70° / 수직: 0°, 1°, 2°, 3°, 4°, 5°, 7.5° or 10°",
@@ -1298,7 +1715,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "Syva",
           "특성": "2-way passive",
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "87 Hz - 20 kHz",
           "MAX SPL": "137 dB",
           "커버리지": "수평: 140° / 수직: +5°/-21°",
@@ -1322,7 +1739,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "ARCS II",
           "특성": "Arrayable Radial Coherent System",
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "35 Hz - 20 kHz",
           "MAX SPL": "149 dB",
           "커버리지": "수평: 22.5° / 수직: +40° , -20° ",
@@ -1346,7 +1763,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "X8",
           "특성": '2-way passive, 8"',
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "60 Hz - 20 kHz",
           "MAX SPL": "129 dB",
           "커버리지": "수평: 100° / 수직: 100°",
@@ -1370,7 +1787,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "J8 / J12",
           "특성": "Large format 3-way passive",
-          "사용앰프": "D80 / D12",
+          "사용엠프": "D80 / D12",
           "주파수응답특성": "48 Hz - 17 kHz",
           "MAX SPL": "J8: 145 dB / J12: 143 dB",
           "커버리지": "수평: J8 80° / J12 120°",
@@ -1394,7 +1811,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "K1-SB",
           "특성": "K1 system subwoofer 2×15",
-          "사용앰프": "LA12X",
+          "사용엠프": "LA12X",
           "주파수응답특성": "30 Hz",
           "MAX SPL": "145 dB",
           "방사 패턴": "omni",
@@ -1418,7 +1835,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "KS28",
           "특성": "Reference high power subwoofer",
-          "사용앰프": "LA12X",
+          "사용엠프": "LA12X",
           "주파수응답특성": "25 Hz",
           "MAX SPL": "143 dB",
           "방사 패턴": "omni or cardioid",
@@ -1442,7 +1859,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "SB18",
           "특성": "High-power subwoofer",
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "32 Hz",
           "MAX SPL": "138 dB",
           "방사 패턴": "omni or cardioid",
@@ -1466,7 +1883,7 @@
           "제조사": "L-ACOUSTICS",
           "제품명": "SYVA LOW",
           "특성": "Performance Art, Bass reflex",
-          "사용앰프": "LA12X / LA4X / LA8",
+          "사용엠프": "LA12X / LA4X / LA8",
           "주파수응답특성": "27 Hz",
           "MAX SPL": "128 dB",
           "방사 패턴": "omni",
@@ -1490,7 +1907,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "J-SUB",
           "특성": "Large format flyable cardioid subwoofer",
-          "사용앰프": "D80 / D12",
+          "사용엠프": "D80 / D12",
           "주파수응답특성": "32 Hz - 100 Hz",
           "MAX SPL": "D80: 139 dB / D12: 138 dB",
           "방사 패턴": "cardioid",
@@ -1514,7 +1931,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "B2-SUB",
           "특성": "Double band pass subwoofer",
-          "사용앰프": "D80 / D12",
+          "사용엠프": "D80 / D12",
           "주파수응답특성": "37 Hz - 90 Hz",
           "MAX SPL": "139 dB",
           "방사 패턴": "omni or cardioid",
@@ -1538,7 +1955,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "M2",
           "특성": "2-way active",
-          "사용앰프": "D80 / D12",
+          "사용엠프": "D80 / D12",
           "주파수응답특성": "57 Hz - 17 kHz",
           "MAX SPL": "143 dB",
           "커버리지": "수평: 45° / 수직: 60°",
@@ -1560,7 +1977,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "M4",
           "특성": "2-way passive / active",
-          "사용앰프": "D80 / D12 / D6",
+          "사용엠프": "D80 / D12 / D6",
           "주파수응답특성": "55 Hz - 17 kHz",
           "MAX SPL": "passive: 138 dB / active: 140 dB",
           "커버리지": "수평: 50° / 수직: 70°",
@@ -1582,7 +1999,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "M6",
           "특성": "2-way passive / active",
-          "사용앰프": "D80 / D12 / D6",
+          "사용엠프": "D80 / D12 / D6",
           "주파수응답특성": "65 Hz - 17 kHz",
           "MAX SPL": "passive: 135 dB / active: 138 dB",
           "커버리지": "수평: 50° / 수직: 80°",
@@ -1604,7 +2021,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "MAX",
           "특성": "2-way passive / active",
-          "사용앰프": "D80 / D12 / D6",
+          "사용엠프": "D80 / D12 / D6",
           "주파수응답특성": "55 Hz - 18 kHz",
           "MAX SPL": "passive: D6 131dB, D12/D80 135dB / active: D12/D80 136dB",
           "커버리지": "수평: 60° / 수직: 60°",
@@ -1626,7 +2043,7 @@
           "제조사": "d&b audiotechnik",
           "제품명": "Ci80",
           "특성": "2-way passive / active",
-          "사용앰프": "D80 / D12 / D6",
+          "사용엠프": "D80 / D12 / D6",
           "주파수응답특성": "70 Hz – 20 kHz",
           "MAX SPL": "D6: 126 dB / D12,D80: 129 dB",
           "커버리지": "수평: 85° / 수직: 85°",
@@ -1648,7 +2065,7 @@
           "제조사": "JBL",
           "제품명": "SRX712M",
           "특성": "2-way passive / active",
-          "사용앰프": "D80 / D12 / D6 - LINEAR(preset)",
+          "사용엠프": "D80 / D12 / D6 - LINEAR(preset)",
           "주파수응답특성": "70 Hz - 20 kHz",
           "MAX SPL": "131 dB",
           "커버리지": "수평: 90° / 수직: 50°",
@@ -1670,7 +2087,7 @@
           "제조사": "JBL",
           "제품명": "EON15-G2",
           "특성": "2-way powered",
-          "사용앰프": "내장 앰프",
+          "사용엠프": "내장 엠프",
           "주파수응답특성": "39 Hz - 18 kHz",
           "MAX SPL": "129 dB",
           "커버리지": "수평: 90° / 수직: 60°",
@@ -1692,7 +2109,7 @@
           "제조사": "YAMAHA",
           "제품명": "MSP5",
           "특성": "2-way powered",
-          "사용앰프": "내장 앰프",
+          "사용엠프": "내장 엠프",
           "주파수응답특성": "50 Hz - 40 kHz",
           "MAX SPL": "101 dB",
           "커버리지": "수평: 120° / 수직: 120°",
@@ -1714,7 +2131,7 @@
           "제조사": "GENELEC",
           "제품명": "8330A",
           "특성": "2-way powered",
-          "사용앰프": "내장 앰프",
+          "사용엠프": "내장 엠프",
           "주파수응답특성": "45 Hz - 23 kHz",
           "MAX SPL": "104 dB",
           "커버리지": "수평: 120° / 수직: 120°",
@@ -1726,8 +2143,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프",
+        mainCategory: "엠프",
+        category: "엠프",
         brand: "L-ACOUSTICS",
         name: "LA12X",
         summary: "4 x 3300 W at 2.7 Ω",
@@ -1749,8 +2166,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프",
+        mainCategory: "엠프",
+        category: "엠프",
         brand: "L-ACOUSTICS",
         name: "LA4X",
         summary: "4 x 1000 W at 4 and 8 Ω",
@@ -1772,8 +2189,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프",
+        mainCategory: "엠프",
+        category: "엠프",
         brand: "L-ACOUSTICS",
         name: "LA8",
         summary: "4 × 1800 W at 4 Ω and 2.7 Ω",
@@ -1795,8 +2212,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프",
+        mainCategory: "엠프",
+        category: "엠프",
         brand: "d&b audiotechnik",
         name: "D80",
         summary: "4 × 2600 W / 2000 W at 4 Ω / 8 Ω",
@@ -1818,8 +2235,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프 랙/악세서리",
+        mainCategory: "엠프",
+        category: "엠프 랙/악세서리",
         brand: "L-ACOUSTICS",
         name: "LA-RAK II AVB",
         summary: "Three-phase 32 A IEC in/link",
@@ -1836,8 +2253,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프 랙/악세서리",
+        mainCategory: "엠프",
+        category: "엠프 랙/악세서리",
         brand: "L-ACOUSTICS",
         name: "Coupling bar",
         summary: "1.5 kg",
@@ -1850,8 +2267,8 @@
         }
       },
       {
-        mainCategory: "앰프",
-        category: "앰프 랙/악세서리",
+        mainCategory: "엠프",
+        category: "엠프 랙/악세서리",
         brand: "L-ACOUSTICS",
         name: "Dolly board",
         summary: "14 kg",
@@ -2363,8 +2780,13 @@
       document.getElementById("product-manual-view").classList.add("hidden");
       document.getElementById("angle-picker-view").classList.add("hidden");
       document.getElementById("delay-calc-view").classList.add("hidden");
+      const tv = document.getElementById("truck-calc-view");
+      if (tv) tv.classList.add("hidden");
       const cv = document.getElementById("creator-view");
       if (cv) cv.classList.add("hidden");
+      const rv = document.getElementById("rta-view");
+      if (rv) rv.classList.add("hidden");
+      if (typeof stopRta === "function") stopRta(true);
 
       // 메인 화면: 사용자가 켜둔 경우에만 하중 바 표시
       applyLoadBarPreference();
@@ -2402,7 +2824,8 @@
     }
 
     function hideAllViews() {
-      ["category-view","brand-view","product-view","detail-view","manual-view","product-manual-view","angle-picker-view","delay-calc-view","creator-view"].forEach(id => {
+      document.body.classList.remove("truck-wide");
+      ["category-view","brand-view","product-view","detail-view","manual-view","product-manual-view","angle-picker-view","delay-calc-view","creator-view","truck-calc-view","rta-view"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add("hidden");
       });
@@ -3392,6 +3815,1121 @@
       const today = new Date().toISOString().slice(0, 10);
       XLSX.writeFile(workbook, `장비_하중리스트_${today}.xlsx`);
     }
+
+    const truckTypes = [
+      { id: "1t", name: "1톤", w: 1600, l: 3100 },
+      { id: "25t", name: "2.5톤", w: 1800, l: 4300 },
+      { id: "35t", name: "3.5톤", w: 1900, l: 6200 },
+      { id: "5t", name: "5톤", w: 2400, l: 6000 }
+    ];
+
+    // 나중에 여기만 추가하면 됨
+    const truckCatalogItems = [
+      { name: "K1 쉐리엇", w: 1450, d: 610, stack: 1, h: 1900, kg: 471 },
+      { name: "K2 쉐리엇", w: 1450, d: 610, stack: 1, h: 1600, kg: 265 },
+      { name: "KS28 쉐리엇", w: 1450, d: 813, stack: 1, h: 1930, kg: 290.5 },
+      { name: "LA-RAK II AVB", w: 609, d: 513, stack: 2, h: 1175, kg: 203 },
+      { name: "K-BUMPFLIGHT", w: 1450, d: 643, stack: 1, h: 1224, kg: 105 }
+    ];
+
+    let truckFleet = [];
+    let truckActive = 0;
+    let truckLoad = [];
+    let truckHitRects = [];
+    let truckDrawMeta = { pad: 16, scale: 1 };
+    let truckMode = "auto";
+
+    function setTruckMode(mode) {
+      truckMode = mode;
+      const man = document.getElementById("truck-mode-manual");
+      const aut = document.getElementById("truck-mode-auto");
+      const sub = document.getElementById("truck-mode-sub");
+      const btn = document.getElementById("truck-calc-btn");
+      if (man) man.classList.toggle("on", mode === "manual");
+      if (aut) aut.classList.toggle("on", mode === "auto");
+      if (sub) sub.textContent = mode === "auto"
+        ? "장비를 고른 뒤 [최적 적재 계산]을 누르세요. 회전까지 자동으로 맞춥니다."
+        : "장비를 개별클릭하면 회전합니다. 드래그하면 자리가 바뀝니다.";
+      if (btn) {
+        if (mode === "auto") btn.classList.remove("hidden");
+        else btn.classList.add("hidden");
+      }
+    }
+
+
+    function syncActiveLoad() {
+      if (!truckFleet.length) {
+        addFleetTruck("5t", true);
+      }
+      if (truckActive < 0 || truckActive >= truckFleet.length) truckActive = 0;
+      truckLoad = truckFleet[truckActive].load;
+    }
+
+    function fleetLabel(slot, idx) {
+      const same = truckFleet.filter(t => t.typeId === slot.typeId);
+      const n = same.findIndex(t => t === slot) + 1;
+      const t = truckTypes.find(x => x.id === slot.typeId);
+      return (t ? t.name : slot.typeId) + " #" + n;
+    }
+
+    function renderFleetTabs() {
+      const box = document.getElementById("truck-fleet-tabs");
+      if (!box) return;
+      if (!truckFleet.length) {
+        box.innerHTML = '<div style="font-size:12px;color:#86868b;">위에서 용차를 추가하세요</div>';
+        return;
+      }
+      box.innerHTML = truckFleet.map((slot, i) =>
+        `<button type="button" class="truck-fleet-tab${i===truckActive?' on':''}" onclick="selectFleetTruck(${i})"><span>${fleetLabel(slot,i)}</span><span class="x" onclick="event.stopPropagation();removeFleetTruck(${i})">×</span></button>`
+      ).join("");
+    }
+
+    function addFleetTruck(typeId, silent) {
+      const id = typeId || document.getElementById("truck-type").value || "5t";
+      truckFleet.push({ typeId: id, load: [] });
+      truckActive = truckFleet.length - 1;
+      syncActiveLoad();
+      renderFleetTabs();
+      if (!silent) renderTruckPlan();
+    }
+
+    function selectFleetTruck(i) {
+      truckActive = i;
+      syncActiveLoad();
+      const sel = document.getElementById("truck-type");
+      if (sel) sel.value = truckFleet[i].typeId;
+      renderFleetTabs();
+      renderTruckPlan();
+    }
+
+    function removeFleetTruck(i) {
+      truckFleet.splice(i, 1);
+      if (!truckFleet.length) addFleetTruck("5t", true);
+      if (truckActive >= truckFleet.length) truckActive = truckFleet.length - 1;
+      syncActiveLoad();
+      const sel = document.getElementById("truck-type");
+      if (sel) sel.value = truckFleet[truckActive].typeId;
+      renderFleetTabs();
+      renderTruckPlan();
+    }
+
+
+    function showTruckCalc() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.body.classList.add("truck-wide");
+      document.getElementById("truck-calc-view").classList.remove("hidden");
+      const sel = document.getElementById("truck-type");
+      if (!sel.options.length) {
+        truckTypes.forEach(t => {
+          const o = document.createElement("option");
+          o.value = t.id;
+          o.textContent = t.name + "  (" + t.w + " × " + t.l + " mm)";
+          sel.appendChild(o);
+        });
+        sel.value = "5t";
+      }
+      if (!truckFleet.length) addFleetTruck("5t", true);
+      else {
+        sel.value = truckFleet[truckActive].typeId;
+        syncActiveLoad();
+      }
+      renderFleetTabs();
+      renderTruckCatalog();
+      bindTruckCanvasEvents();
+      setTruckMode(truckMode || "manual");
+      renderTruckPlan();
+    }
+
+
+    function renderTruckCatalog() {
+      const q = (document.getElementById("truck-search")?.value || "").trim().toLowerCase();
+      const list = document.getElementById("truck-item-list");
+      list.innerHTML = "";
+      truckCatalogItems.forEach((it, i) => {
+        if (q && !it.name.toLowerCase().includes(q)) return;
+        const div = document.createElement("div");
+        div.className = "truck-item-card";
+        div.innerHTML = `
+          <div class="truck-item-name">${it.name}</div>
+          <div class="truck-item-dim">평면 ${it.w} × ${it.d} mm · 높이 ${it.h||"-"} mm<br>${it.kg||"-"} kg${it.stack>1?" · "+it.stack+"단 적재":" · 1단"}</div>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:6px;">
+            <input class="quantity-input" id="truck-qty-${i}" type="number" min="1" value="1" style="width:44px;background:#f0f0f4;border-radius:6px;">
+            <button class="truck-add-btn" type="button" style="margin-top:0;flex:1;">+ 적재</button>
+          </div>
+        `;
+        div.querySelector("button").onclick = () => {
+          const n = parseInt(document.getElementById("truck-qty-" + i).value, 10) || 1;
+          addTruckItem(it.name, it.w, it.d, n);
+        };
+        list.appendChild(div);
+      });
+      if (!list.children.length) {
+        list.innerHTML = '<div class="empty-message" style="padding:16px;">검색 결과 없음</div>';
+      }
+    }
+    function filterTruckCatalog() { renderTruckCatalog(); }
+
+    function addTruckItem(name, w, d, qty) {
+      const n = Math.max(1, qty || 1);
+      const cat = truckCatalogItems.find(x => x.name === name);
+      const stack = (cat && cat.stack) || 1;
+      let left = n;
+      truckLoad.forEach(it => {
+        if (left <= 0) return;
+        if (it.name === name && (it.units || 1) < stack) {
+          const room = stack - (it.units || 1);
+          const add = Math.min(room, left);
+          it.units = (it.units || 1) + add;
+          it.stack = stack;
+          left -= add;
+        }
+      });
+      while (left > 0) {
+        const units = Math.min(stack, left);
+        truckLoad.push({ name, w, d, rot: false, px: null, py: null, pinned: false, stack, units, h: (cat && cat.h) || 0, kg: (cat && cat.kg) || 0 });
+        left -= units;
+      }
+      renderTruckPlan();
+    }
+
+    function removeTruckGroup(name) {
+      truckLoad = truckLoad.filter(it => it.name !== name);
+      renderTruckPlan();
+    }
+
+    function rotateTruckGroup(name) {
+      truckLoad.forEach(it => {
+        if (it.name === name) {
+          it.rot = !it.rot;
+          it.px = null;
+          it.py = null;
+          it.pinned = false;
+        }
+      });
+      renderTruckPlan();
+    }
+
+    function clearTruckLoad() {
+      truckLoad = [];
+      renderTruckPlan();
+    }
+
+    function onTruckTypeChange() {
+      truckLoad.forEach(it => { it.px = null; it.py = null; it.pinned = false; });
+      renderTruckPlan();
+    }
+
+    function currentTruck() {
+      const id = (truckFleet[truckActive] && truckFleet[truckActive].typeId) || document.getElementById("truck-type").value;
+      return truckTypes.find(t => t.id === id) || truckTypes[3];
+    }
+
+
+    function cloneTruckItems(arr) {
+      return arr.map(it => ({ ...it, px: null, py: null }));
+    }
+
+    function speakerRank(name) {
+      if (name.indexOf("K1") === 0) return 0;
+      if (name.indexOf("K2") === 0) return 1;
+      if (name.indexOf("KS28") === 0) return 2;
+      return 9;
+    }
+
+    function packScore(truck, result) {
+      const overflow = result.placed.filter(p => !p.fit).length;
+      const speakerWrong = result.placed.reduce((s, p) => {
+        if (!isSpeakerCart(p)) return s;
+        const iw = p.iw || (p.rot ? p.d : p.w);
+        if ((p.name.indexOf("K1") === 0 || p.name.indexOf("K2") === 0) && iw < 1400) return s + 5000000;
+        if (p.name.indexOf("KS28") === 0 && truck.w >= 2300 && iw > 900) return s + 5000000;
+        return s;
+      }, 0);
+      const speakerFront = result.placed.reduce((s, p) => {
+        if (!isSpeakerCart(p)) return s;
+        return s + p.y * (3 - speakerRank(p.name));
+      }, 0);
+      const rackFront = result.placed.reduce((s, p) => {
+        if (isSpeakerCart(p)) return s;
+        return s + p.y * (itemWeight(p) / 200);
+      }, 0);
+      return overflow * 100000000 + speakerWrong + speakerFront * 20 + rackFront * 2 + result.usedL;
+    }
+
+    function itemHeight(it) {
+      if (it.h) return it.h;
+      const c = truckCatalogItems.find(x => x.name === it.name);
+      return c ? c.h : 0;
+    }
+    function itemWeight(it) {
+      if (it.kg) return it.kg;
+      const c = truckCatalogItems.find(x => x.name === it.name);
+      return c ? c.kg : 0;
+    }
+    function loadPriority(a, b) {
+      const w = itemWeight(b) - itemWeight(a);
+      if (w) return w;
+      const type = a.name.localeCompare(b.name);
+      if (type) return type;
+      return itemHeight(b) - itemHeight(a);
+    }
+    function isSpeakerCart(it) {
+      const n = it.name || "";
+      return n.indexOf("K1") === 0 || n.indexOf("K2") === 0 || n.indexOf("KS28") === 0;
+    }
+    function applySpeakerRots(it, truck) {
+      if (!isSpeakerCart(it)) return;
+      const gap = truck.w - 1450;
+      if (it.name.indexOf("K1") === 0 || it.name.indexOf("K2") === 0) it.rot = false;
+      if (it.name.indexOf("KS28") === 0) it.rot = gap >= 800;
+    }
+    function applyHousePattern(arr, truck) {
+      const out = cloneTruckItems(arr);
+      const speakers = out.filter(isSpeakerCart);
+      const racks = out.filter(it => !isSpeakerCart(it));
+      speakers.sort((a, b) => speakerRank(a.name) - speakerRank(b.name));
+      racks.sort(loadPriority);
+      const gap = truck.w - 1450;
+      speakers.forEach(it => applySpeakerRots(it, truck));
+      return speakers.concat(racks);
+    }
+
+    let truckPlans = { A: null, B: null, C: null };
+    let truckPlanPick = "A";
+
+    function planStats(truck, items) {
+      const copy = cloneTruckItems(items);
+      const result = packTruck(truck, copy);
+      return {
+        items: copy,
+        usedL: result.usedL,
+        overflow: result.placed.filter(p => !p.fit).length,
+        result
+      };
+    }
+
+    function buildPlanA(truck, items) {
+      return planStats(truck, applyHousePattern(items, truck));
+    }
+    function buildPlanB(truck, items) {
+      const working = cloneTruckItems(items);
+      working.sort((a,b) => (b.w*b.d) - (a.w*a.d));
+      working.forEach((it, idx) => {
+        const t0 = working.map(x => ({...x})); t0[idx].rot = false;
+        const t1 = working.map(x => ({...x})); t1[idx].rot = true;
+        const s0 = packScore(truck, packTruck(truck, cloneTruckItems(t0)));
+        const s1 = packScore(truck, packTruck(truck, cloneTruckItems(t1)));
+        it.rot = s1 < s0;
+      });
+      return planStats(truck, working);
+    }
+    function buildPlanC(truck, items) {
+      const working = cloneTruckItems(items);
+      working.sort((a,b) => Math.min(a.w,a.d) - Math.min(b.w,b.d));
+      working.forEach(it => { it.rot = it.d > it.w; });
+      return planStats(truck, working);
+    }
+
+    function renderTruckPlans() {
+      const box = document.getElementById("truck-plans");
+      if (!box) return;
+      if (!truckPlans.A) { box.innerHTML = ""; return; }
+      box.innerHTML = ["A","B","C"].map(k => {
+        const p = truckPlans[k];
+        const title = k === "A" ? "1순위 규칙" : k === "B" ? "효율 우선" : "틈새 우선";
+        const ov = p.overflow ? ("밖 "+p.overflow+"칸") : "내부 수용";
+        return `<button type="button" class="truck-plan${truckPlanPick===k?" on":""}" onclick="applyTruckPlan('${k}')"><b>${k}안</b><span>${title}<br>${p.usedL}mm · ${ov}</span></button>`;
+      }).join("");
+    }
+
+    function applyTruckPlan(key) {
+      const p = truckPlans[key];
+      if (!p) return;
+      truckPlanPick = key;
+      truckLoad = cloneTruckItems(p.items);
+      if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+      renderTruckPlans();
+      renderTruckPlan();
+    }
+
+    function optimizeTruckLoad() {
+      if (!truckLoad.length) {
+        alert("먼저 장비를 추가하세요");
+        return;
+      }
+      const truck = currentTruck();
+      const snapshot = cloneTruckItems(truckLoad);
+      truckPlans.A = buildPlanA(truck, snapshot);
+      truckPlans.B = buildPlanB(truck, snapshot);
+      truckPlans.C = buildPlanC(truck, snapshot);
+      truckPlanPick = "A";
+      truckLoad = cloneTruckItems(truckPlans.A.items);
+      if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+
+      let added = 0;
+      for (let n = 0; n < 8; n++) {
+        const t = currentTruck();
+        const split = splitFitSpill(t, truckLoad);
+        truckLoad = split.keep;
+        if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+        if (!split.spill.length) break;
+        addFleetTruck("35t");
+        truckLoad = split.spill;
+        if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+        added++;
+      }
+      renderFleetTabs();
+      renderTruckPlans();
+      renderTruckPlan();
+      alert(added ? ("A안 적용\n넘친 짐은 3.5톤 " + added + "대에 옮겼습니다\nB/C안을 눌러 비교하세요") : "A안 적용. B/C안에서 다른 배치를 볼 수 있습니다");
+    }
+
+    function runOptimizeCore() {
+      if (!truckLoad.length) return;
+      const truck = currentTruck();
+      const n = truckLoad.length;
+      let bestItems = cloneTruckItems(truckLoad);
+      let bestScore = packScore(truck, packTruck(truck, cloneTruckItems(truckLoad)));
+
+      function consider(arr) {
+        const copy = cloneTruckItems(arr);
+        const result = packTruck(truck, copy);
+        const s = packScore(truck, result);
+        if (s < bestScore) {
+          bestScore = s;
+          bestItems = copy;
+        }
+      }
+
+      function applyGreedyRot(order) {
+        const placedLike = [];
+        const working = cloneTruckItems(order);
+        working.forEach((it, idx) => {
+          if (isSpeakerCart(it)) {
+            applySpeakerRots(it, truck);
+            working[idx].rot = it.rot;
+            return;
+          }
+          const trial0 = working.map(x => ({ ...x }));
+          const trial1 = working.map(x => ({ ...x }));
+          trial0[idx].rot = false;
+          trial1[idx].rot = true;
+          const r0 = packTruck(truck, trial0);
+          const r1 = packTruck(truck, trial1);
+          const useRot = packScore(truck, r1) < packScore(truck, r0);
+          it.rot = useRot;
+          working[idx].rot = useRot;
+        });
+        consider(working);
+      }
+
+      const orders = [];
+      orders.push(applyHousePattern(truckLoad, truck));
+      orders.push(truckLoad.slice());
+      orders.push(truckLoad.slice().reverse());
+      orders.push(truckLoad.slice().sort(loadPriority));
+      orders.push(truckLoad.slice().sort((a,b) => (b.w*b.d) - (a.w*a.d)));
+      orders.push(truckLoad.slice().sort((a,b) => Math.max(b.w,b.d) - Math.max(a.w,a.d)));
+      orders.push(truckLoad.slice().sort((a,b) => Math.min(b.w,b.d) - Math.min(a.w,a.d)));
+      const tries = n <= 10 ? 24 : n <= 16 ? 14 : 8;
+      for (let t = 0; t < tries; t++) {
+        const sh = truckLoad.slice();
+        for (let i = sh.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = sh[i]; sh[i] = sh[j]; sh[j] = tmp;
+        }
+        sh.sort((a,b) => loadPriority(a,b) || Math.random() - 0.5);
+        orders.push(sh);
+      }
+      consider(applyHousePattern(truckLoad, truck));
+      orders.forEach(ord => {
+        consider(ord);
+        applyGreedyRot(ord);
+      });
+
+      truckLoad = bestItems;
+      const tnow = currentTruck();
+      truckLoad.forEach(it => applySpeakerRots(it, tnow));
+      truckLoad.forEach(it => { it.px = null; it.py = null; });
+      const speakers = truckLoad.filter(isSpeakerCart);
+      const racks = truckLoad.filter(it => !isSpeakerCart(it));
+      speakers.sort((a, b) => speakerRank(a.name) - speakerRank(b.name));
+      racks.sort(loadPriority);
+      truckLoad = speakers.concat(racks);
+      packTruck(tnow, truckLoad);
+      if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+    }
+
+    function splitFitSpill(truck, items) {
+      const copy = cloneTruckItems(items);
+      const result = packTruck(truck, copy);
+      const keep = [], spill = [];
+      result.placed.forEach(p => {
+        const src = Object.assign({}, copy[p.idx]);
+        if (p.fit) keep.push(src);
+        else {
+          src.px = null;
+          src.py = null;
+          spill.push(src);
+        }
+      });
+      return { keep, spill };
+    }
+
+    function setTruckGroupQty(name, qty) {
+      qty = parseInt(qty, 10);
+      if (isNaN(qty) || qty < 0) qty = 0;
+      const sample = truckLoad.find(x => x.name === name) || truckCatalogItems.find(x => x.name === name);
+      if (!sample) return;
+      truckLoad = truckLoad.filter(x => x.name !== name);
+      if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+      if (qty > 0) addTruckItem(name, sample.w, sample.d, qty);
+      else renderTruckPlan();
+    }
+
+
+    function exportTruckReport() {
+      if (!truckFleet.length) { alert("용차가 없습니다"); return; }
+      const saved = truckActive;
+      const blocks = [];
+      truckFleet.forEach((slot, i) => {
+        truckActive = i;
+        syncActiveLoad();
+        renderTruckPlan();
+        const truck = truckTypes.find(t => t.id === slot.typeId) || currentTruck();
+        const canvas = document.getElementById("truck-canvas");
+        const img = canvas ? canvas.toDataURL("image/png") : "";
+        const kg = truckLoad.reduce((s, it) => s + (it.kg || itemWeight(it) || 0) * (it.units || 1), 0);
+        const maxH = truckLoad.reduce((m, it) => Math.max(m, it.h || itemHeight(it) || 0), 0);
+        const groups = [];
+        truckLoad.forEach(it => {
+          let g = groups.find(x => x.name === it.name);
+          if (!g) { g = { name: it.name, qty: 0, h: it.h || itemHeight(it), kg: it.kg || itemWeight(it), w: it.w, d: it.d }; groups.push(g); }
+          g.qty += (it.units || 1);
+        });
+        const packed = packTruck(truck, cloneTruckItems(truckLoad));
+        blocks.push({
+          title: fleetLabel(slot, i),
+          size: truck.w + " × " + truck.l + " mm",
+          kg: kg.toFixed(1),
+          maxH,
+          usedL: packed.usedL,
+          img,
+          groups
+        });
+      });
+      truckActive = saved;
+      syncActiveLoad();
+      renderFleetTabs();
+      renderTruckPlan();
+
+      const old = document.getElementById("truck-report-print");
+      if (old) old.remove();
+      const wrap = document.createElement("div");
+      wrap.id = "truck-report-print";
+      wrap.style.cssText = "background:#fff;color:#111;padding:28px;max-width:820px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;";
+      const now = new Date();
+      const when = now.getFullYear() + "." + String(now.getMonth()+1).padStart(2,"0") + "." + String(now.getDate()).padStart(2,"0");
+      let htmlR = `
+        <div style="border-bottom:3px solid #1d1d1f;padding-bottom:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;">
+          <div>
+            <div style="font-size:12px;letter-spacing:2px;color:#86868b;">HYUNDAE SOUND</div>
+            <div style="font-size:26px;font-weight:800;">용차 적재 보고서</div>
+          </div>
+          <div style="text-align:right;font-size:13px;color:#555;">${when}<br>용차 ${blocks.length}대</div>
+        </div>`;
+      const totKg = blocks.reduce((s,b) => s + parseFloat(b.kg), 0);
+      htmlR += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px;">
+        <div style="background:#f5f5f7;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#86868b;">총 용차</div><div style="font-size:20px;font-weight:800;">${blocks.length}대</div></div>
+        <div style="background:#f5f5f7;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#86868b;">총 적재 무게</div><div style="font-size:20px;font-weight:800;">${totKg.toFixed(1)} kg</div></div>
+        <div style="background:#f5f5f7;border-radius:10px;padding:12px;"><div style="font-size:11px;color:#86868b;">최고 높이</div><div style="font-size:20px;font-weight:800;">${Math.max.apply(null, blocks.map(b=>b.maxH)) || 0} mm</div></div>
+      </div>`;
+      blocks.forEach((b, idx) => {
+        htmlR += `<div style="page-break-inside:avoid;border:1px solid #e5e5ea;border-radius:12px;padding:16px;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+            <div style="font-size:18px;font-weight:800;">${idx+1}. ${b.title}</div>
+            <div style="font-size:12px;color:#86868b;">적재함 ${b.size}</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;font-size:13px;">
+            <div>용차별 적재무게 <b>${b.kg} kg</b></div>
+            <div>최고높이 <b>${b.maxH} mm</b></div>
+            <div>사용세로 <b>${b.usedL} mm</b></div>
+          </div>
+          <img src="${b.img}" style="width:100%;max-height:420px;object-fit:contain;background:#fafafa;border-radius:8px;margin-bottom:12px;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="background:#1d1d1f;color:#fff;">
+              <th style="text-align:left;padding:8px;">장비</th>
+              <th style="padding:8px;">수량</th>
+              <th style="padding:8px;">평면 mm</th>
+              <th style="padding:8px;">높이 mm</th>
+              <th style="padding:8px;">무게 kg</th>
+              <th style="padding:8px;">소계 kg</th>
+            </tr></thead><tbody>`;
+        b.groups.forEach(g => {
+          htmlR += `<tr style="border-bottom:1px solid #eee;">
+            <td style="padding:7px;">${g.name}</td>
+            <td style="text-align:center;padding:7px;">${g.qty}</td>
+            <td style="text-align:center;padding:7px;">${g.w} × ${g.d}</td>
+            <td style="text-align:center;padding:7px;">${g.h||"-"}</td>
+            <td style="text-align:center;padding:7px;">${g.kg||"-"}</td>
+            <td style="text-align:center;padding:7px;">${((g.kg||0)*g.qty).toFixed(1)}</td>
+          </tr>`;
+        });
+        if (!b.groups.length) htmlR += `<tr><td colspan="6" style="padding:10px;color:#86868b;">적재 없음</td></tr>`;
+        htmlR += `</tbody></table></div>`;
+      });
+      htmlR += `<div style="margin-top:8px;font-size:11px;color:#86868b;">현대음향 만능툴 · 용차 적재 보고서 · 인쇄 창에서 PDF로 저장하세요.</div>
+        <div style="margin-top:16px;"><button onclick="window.print()" style="padding:10px 16px;border:none;border-radius:8px;background:#0071e3;color:#fff;font-weight:700;cursor:pointer;">인쇄 / PDF 저장</button>
+        <button onclick="document.getElementById('truck-report-print').remove()" style="padding:10px 16px;border:none;border-radius:8px;background:#eee;margin-left:8px;cursor:pointer;">닫기</button></div>`;
+      wrap.innerHTML = htmlR;
+      document.body.appendChild(wrap);
+      wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function packTruck(truck, items) {
+      let free = [{ x: 0, y: 0, w: truck.w, l: truck.l }];
+      const placed = [];
+      let overflow = 0;
+
+      function splitFree(x, y, w, h) {
+        const next = [];
+        free.forEach(r => {
+          if (x >= r.x + r.w || x + w <= r.x || y >= r.y + r.l || y + h <= r.y) {
+            next.push(r);
+            return;
+          }
+          if (x > r.x) next.push({ x: r.x, y: r.y, w: x - r.x, l: r.l });
+          if (x + w < r.x + r.w) next.push({ x: x + w, y: r.y, w: r.x + r.w - (x + w), l: r.l });
+          if (y > r.y) next.push({ x: r.x, y: r.y, w: r.w, l: y - r.y });
+          if (y + h < r.y + r.l) next.push({ x: r.x, y: y + h, w: r.w, l: r.y + r.l - (y + h) });
+        });
+        free = next.filter((a, i) => a.w >= 8 && a.l >= 8 && !next.some((b, j) =>
+          i !== j && a.x >= b.x && a.y >= b.y && a.x + a.w <= b.x + b.w && a.y + a.l <= b.y + b.l
+        ));
+        free.sort((a, b) => a.y - b.y || a.x - b.x);
+      }
+
+      items.forEach((it, idx) => {
+        const iw = it.rot ? it.d : it.w;
+        const idp = it.rot ? it.w : it.d;
+        let best = null;
+        free.forEach(r => {
+          if (iw > r.w || idp > r.l) return;
+          const waste = r.w - iw;
+          const sameRow = placed.some(p => Math.abs(p.y - r.y) < 25);
+          const score = waste + (sameRow ? 0 : truck.w * 2);
+          if (!best || score < best.score || (score === best.score && r.y < best.y) || (score === best.score && r.y === best.y && r.x < best.x)) {
+            best = { x: r.x, y: r.y, score };
+          }
+        });
+        if (!best) {
+          overflow++;
+          const y = Math.max(truck.l, placed.reduce((m, p) => Math.max(m, p.y + p.idp), 0));
+          placed.push({ ...it, x: 0, y, iw, idp, fit: false, idx });
+          return;
+        }
+        placed.push({ ...it, x: best.x, y: best.y, iw, idp, fit: true, idx });
+        splitFree(best.x, best.y, iw, idp);
+      });
+
+      // 같은 y + 같은 줄높이만 한 줄로 보고, 높은 것을 가운데 (겹침 방지)
+      const shelves = {};
+      placed.forEach(p => {
+        const key = Math.round(p.y) + "_" + Math.round(p.idp);
+        if (!shelves[key]) shelves[key] = [];
+        shelves[key].push(p);
+      });
+      Object.keys(shelves).forEach(key => {
+        const row = shelves[key];
+        if (row.length < 2) return;
+        row.sort((a, b) => a.x - b.x);
+        const left = row[0].x;
+        const byH = row.slice().sort((a, b) => itemHeight(b) - itemHeight(a));
+        const centered = [];
+        byH.forEach((it, i) => { if (i % 2 === 0) centered.push(it); else centered.unshift(it); });
+        let x = left;
+        let ok = true;
+        const xs = [];
+        centered.forEach(p => { xs.push(x); x += p.iw; });
+        if (x - left > row.reduce((s, p) => s + p.iw, 0) + 1) ok = false;
+        if (ok) centered.forEach((p, i) => { p.x = xs[i]; });
+      });
+
+      placed.forEach(p => {
+        if (items[p.idx]) {
+          items[p.idx].px = p.x;
+          items[p.idx].py = p.y;
+        }
+      });
+      const usedL = placed.reduce((m, p) => Math.max(m, p.y + p.idp), 0);
+      return { placed, usedL, overflow };
+    }
+
+    let truckDrag = null;
+
+    function truckCanvasPos(ev, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / rect.width;
+      const sy = canvas.height / rect.height;
+      return { x: (ev.clientX - rect.left) * sx, y: (ev.clientY - rect.top) * sy };
+    }
+
+    function hitTruckItem(x, y) {
+      for (let i = truckHitRects.length - 1; i >= 0; i--) {
+        const r = truckHitRects[i];
+        if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return r;
+      }
+      return null;
+    }
+
+    function bindTruckCanvasEvents() {
+      const canvas = document.getElementById("truck-canvas");
+      if (canvas.dataset.bound) return;
+      canvas.dataset.bound = "1";
+      canvas.style.cursor = "grab";
+      canvas.addEventListener("mousedown", ev => {
+        const p = truckCanvasPos(ev, canvas);
+        const hit = hitTruckItem(p.x, p.y);
+        if (!hit) return;
+        const it = truckLoad[hit.idx];
+        truckDrag = { idx: hit.idx, startX: p.x, startY: p.y, origPx: it.px, origPy: it.py, moved: false };
+      });
+      window.addEventListener("mousemove", ev => {
+        if (!truckDrag) return;
+        const canvas = document.getElementById("truck-canvas");
+        const p = truckCanvasPos(ev, canvas);
+        if (Math.abs(p.x - truckDrag.startX) + Math.abs(p.y - truckDrag.startY) > 8) truckDrag.moved = true;
+      });
+      window.addEventListener("mouseup", ev => {
+        if (!truckDrag) return;
+        const canvas = document.getElementById("truck-canvas");
+        const p = truckCanvasPos(ev, canvas);
+        const drag = truckDrag;
+        truckDrag = null;
+        const it = truckLoad[drag.idx];
+        if (!it) return;
+        if (!drag.moved) {
+          it.rot = !it.rot;
+          it.px = null;
+          it.py = null;
+          it.pinned = false;
+          renderTruckPlan();
+          return;
+        }
+        const hit = hitTruckItem(p.x, p.y);
+        if (hit && hit.idx !== drag.idx) {
+          const a = drag.idx, b = hit.idx;
+          const tmp = truckLoad[a];
+          truckLoad[a] = truckLoad[b];
+          truckLoad[b] = tmp;
+        }
+        renderTruckPlan();
+      });
+    }
+
+    function removeOneTruckItem(name) {
+      const i = truckLoad.map(x => x.name).lastIndexOf(name);
+      if (i >= 0) truckLoad.splice(i, 1);
+      renderTruckPlan();
+    }
+
+
+
+    function updateTruckScore(truck, packed) {
+      const box = document.getElementById("truck-score-box");
+      if (!box) return;
+      if (!truckLoad.length) {
+        box.innerHTML = `
+        <div style="background:#fff;border-radius:12px;padding:8px 8px 10px;margin-bottom:10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+          <div style="width:18px;height:18px;border-radius:50%;background:#d2d2d7;margin:0 auto 4px;"></div>
+          <div style="font-size:13px;font-weight:800;color:#86868b;">용차에 짐이 없습니다</div>
+          <div style="font-size:11px;color:#86868b;">테트리스 0%</div>
+        </div>`;
+        return;
+      }
+      const usedArea = packed.placed.reduce((s, p) => s + p.iw * p.idp, 0);
+      const totalArea = truck.w * truck.l;
+      const fill = totalArea ? (usedArea / totalArea) * 100 : 0;
+      let color = "#86868b", msg = "연습생~", ring = "#d2d2d7";
+      if (fill >= 85) { color = "#34c759"; msg = "오~ 과장급~"; ring = "#34c759"; }
+      else if (fill >= 65) { color = "#ff9500"; msg = "음? 대리급~"; ring = "#ff9500"; }
+      else if (fill >= 50) { color = "#ff3b30"; msg = "용차에서 내려오세요"; ring = "#ff3b30"; }
+      else { color = "#86868b"; msg = "아직 여유 있음"; ring = "#d2d2d7"; }
+
+      const smaller = [];
+      truckTypes.forEach(t => {
+        if (t.id === truck.id) return;
+        if (t.w * t.l >= truck.w * truck.l) return;
+        const trial = packTruck(t, truckLoad);
+        const ok = trial.placed.length === truckLoad.length && trial.placed.every(p => p.fit) && trial.usedL <= t.l;
+        if (ok) smaller.push(t.name);
+      });
+      const extra = smaller.length
+        ? `<div style="margin-top:6px;font-size:12px;color:#0071e3;font-weight:700;">${smaller.join(", ")}으로도 가능합니다</div>`
+        : "";
+
+      box.innerHTML = `
+        <div style="background:#fff;border-radius:12px;padding:8px 8px 10px;margin-bottom:10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+          <div style="width:18px;height:18px;border-radius:50%;background:${ring};margin:0 auto 4px;"></div>
+          <div style="font-size:13px;font-weight:800;color:${color};">${msg}</div>
+          <div style="font-size:11px;color:#86868b;">테트리스 ${fill.toFixed(0)}%</div>
+          ${extra}
+        </div>`;
+    }
+
+    function renderTruckPlan() {
+      const truck = currentTruck();
+      document.getElementById("truck-size-label").textContent =
+        "적재함 평면도  가로 " + truck.w + " mm  ×  세로 " + truck.l + " mm";
+
+      const packed = packTruck(truck, truckLoad);
+      const canvas = document.getElementById("truck-canvas");
+      const ctx = canvas.getContext("2d");
+      const pad = 14;
+      const wrap = canvas.parentElement;
+      const maxW = Math.max(280, (wrap ? wrap.clientWidth : 360) - 28);
+      const usedL = Math.max(truck.l, packed.usedL);
+      const scale = Math.min(maxW / truck.w, 720 / Math.max(truck.l, usedL));
+      truckDrawMeta = { pad, scale };
+      canvas.width = Math.ceil(truck.w * scale + pad * 2);
+      canvas.height = Math.ceil(usedL * scale + pad * 2 + 24);
+
+      ctx.fillStyle = "#f5f5f7";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#e8eef5";
+      ctx.strokeStyle = "#1d1d1f";
+      ctx.lineWidth = 2;
+      ctx.fillRect(pad, pad, truck.w * scale, truck.l * scale);
+      ctx.strokeRect(pad, pad, truck.w * scale, truck.l * scale);
+      ctx.fillStyle = "#86868b";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("앞(운전석 방향)", pad, 12);
+      ctx.fillText(truck.w + "mm", pad + truck.w * scale / 2 - 20, pad + truck.l * scale + 14);
+
+      const colorMap = { "K1 쉐리엇": "#0071e3", "K2 쉐리엇": "#ff9500", "KS28 쉐리엇": "#34c759", "LA-RAK II AVB": "#af52de", "K-BUMPFLIGHT": "#5e5ce6" };
+      truckHitRects = [];
+      packed.placed.forEach((p) => {
+        const x = pad + p.x * scale;
+        const y = pad + p.y * scale;
+        const ww = p.iw * scale;
+        const hh = p.idp * scale;
+        truckHitRects.push({ x, y, w: ww, h: hh, idx: p.idx });
+        ctx.fillStyle = colorMap[p.name] || "#5856d6";
+        ctx.globalAlpha = 0.85;
+        ctx.fillRect(x + 1, y + 1, Math.max(ww - 2, 1), Math.max(hh - 2, 1));
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = "#fff";
+        ctx.strokeRect(x + 1, y + 1, Math.max(ww - 2, 1), Math.max(hh - 2, 1));
+        ctx.fillStyle = "#fff";
+        const same = packed.placed.filter(q => q.name === p.name);
+        const num = same.findIndex(q => q.idx === p.idx) + 1;
+        const short = p.name.replace(" 쉐리엇", "").replace("LA-RAK II AVB", "LA-RAK");
+        const label = short + "-" + num + ((p.units && p.units > 1) ? (" x" + p.units) : "");
+        let fs = Math.min(ww, hh) * 0.22;
+        ctx.font = "bold " + fs + "px sans-serif";
+        while (fs > 7 && ctx.measureText(label).width > ww - 6) {
+          fs -= 0.5;
+          ctx.font = "bold " + fs + "px sans-serif";
+        }
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(label, x + ww / 2, y + hh / 2);
+        ctx.textAlign = "left";
+        ctx.textBaseline = "alphabetic";
+      });
+
+      const groups = [];
+      truckLoad.forEach(it => {
+        let g = groups.find(x => x.name === it.name);
+        if (!g) { g = { name: it.name, w: it.w, d: it.d, rot: it.rot, qty: 0, tiles: 0, stack: it.stack || 1, h: it.h || itemHeight(it), kg: it.kg || itemWeight(it) }; groups.push(g); }
+        g.qty += (it.units || 1);
+        g.tiles++;
+        g.rot = it.rot;
+      });
+
+      const remain = Math.max(truck.l - packed.usedL, 0);
+      updateTruckScore(truck, packed);
+      const totalKg = truckLoad.reduce((s, it) => s + (it.kg || itemWeight(it) || 0) * (it.units || 1), 0);
+      const maxH = truckLoad.reduce((m, it) => Math.max(m, it.h || itemHeight(it) || 0), 0);
+      let htmlL = `<div style="margin:10px 0 6px;font-size:13px;">최고 높이 ${maxH} mm / 사용 세로 ${packed.usedL} mm
+        <button class="truck-mini-btn" onclick="clearTruckLoad()" style="margin-left:8px;">비우기</button>
+        <button class="truck-mini-btn" onclick="exportTruckReport()" style="margin-left:8px;background:#0071e3;color:#fff;">보고서 PDF</button>
+        <strong style="margin-left:10px;">전체 ${totalKg.toFixed(1)} kg</strong></div>`;
+      if (!groups.length) htmlL += `<div class="empty-message" style="padding:12px;">오른쪽에서 장비를 추가하세요</div>`;
+      groups.forEach(g => {
+        const iw = g.rot ? g.d : g.w;
+        const idp = g.rot ? g.w : g.d;
+        htmlL += `<div class="truck-loaded-row">
+          <span style="font-size:15px;">${g.name}<br>
+          <input class="quantity-input" type="number" min="0" value="${g.qty}" style="width:52px;font-size:16px;font-weight:800;background:#f0f0f4;border-radius:6px;" onchange="setTruckGroupQty('${g.name}', this.value)">
+          <strong style="font-size:15px;">개</strong>${g.stack>1?" <span style=\"color:#86868b;font-size:13px;\">(바닥 "+g.tiles+"칸)</span>":""}<br><span style="color:#86868b;font-size:13px;">${iw} × ${idp} mm · 높이 ${g.h || "-"} mm · ${g.kg || "-"} kg × ${g.qty} = ${((g.kg||0)*g.qty).toFixed(1)} kg</span></span>
+          <span>
+            <button class="truck-mini-btn" onclick="rotateTruckGroup('${g.name}')">전체 회전</button>
+            <button class="truck-mini-btn" onclick="removeOneTruckItem('${g.name}')">개별 삭제</button>
+            <button class="truck-mini-btn" onclick="removeTruckGroup('${g.name}')">전체 삭제</button>
+          </span>
+        </div>`;
+      });
+      document.getElementById("truck-loaded-list").innerHTML = htmlL;
+    }
+
+
+    let rtaCtx = null, rtaStream = null, rtaAnalyser = null, rtaAnim = null, rtaSrc = null, rtaGainNode = null;
+    let rtaLastPeakHz = null, rtaLastPeakAt = 0, rtaEnv = null;
+
+    function showRta() {
+      hideAllViews();
+      setLoadBarVisible(false);
+      document.getElementById("rta-view").classList.remove("hidden");
+      startRta();
+    }
+
+
+    function currentRtaRelease() {
+      const el = document.getElementById("rta-release");
+      const v = parseFloat(el && el.value);
+      return isNaN(v) ? 0.995 : v;
+    }
+    function currentRtaAttack() {
+      const el = document.getElementById("rta-attack");
+      const v = parseFloat(el && el.value);
+      return isNaN(v) ? 0.857 : v;
+    }
+    function setRtaStep(kind, btn) {
+      const hidden = document.getElementById("rta-" + kind);
+      const label = document.getElementById("rta-" + kind + "-label");
+      const wrap = document.getElementById("rta-" + kind + "-steps");
+      if (hidden) hidden.value = btn.getAttribute("data-v");
+      if (label) label.textContent = btn.getAttribute("data-l");
+      if (wrap) wrap.querySelectorAll(".rta-step").forEach(b => b.classList.toggle("on", b === btn));
+    }
+    function currentRtaGain() {
+      const el = document.getElementById("rta-gain");
+      const v = el ? parseFloat(el.value) : 16;
+      return v / 10; // 0.0 ~ 4.0
+    }
+    function setRtaGain() {
+      const g = currentRtaGain();
+      if (rtaGainNode) rtaGainNode.gain.value = g;
+      const lab = document.getElementById("rta-gain-label");
+      if (lab) {
+        const db = 20 * Math.log10(Math.max(g, 0.001));
+        lab.textContent = (db >= 0 ? "+" : "") + db.toFixed(0) + " dB";
+      }
+    }
+
+    async function listRtaDevices(selectedId) {
+      const sel = document.getElementById("rta-device");
+      if (!sel || !navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return;
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const mics = devices.filter(d => d.kind === "audioinput");
+      const prev = selectedId || sel.value;
+      sel.innerHTML = "";
+      if (!mics.length) {
+        const o = document.createElement("option");
+        o.textContent = "마이크를 찾을 수 없음";
+        sel.appendChild(o);
+        return;
+      }
+      mics.forEach((d, i) => {
+        const o = document.createElement("option");
+        o.value = d.deviceId;
+        o.textContent = d.label || ("마이크 " + (i + 1));
+        sel.appendChild(o);
+      });
+      if (prev && [...sel.options].some(o => o.value === prev)) sel.value = prev;
+    }
+
+    async function startRta() {
+      const note = document.getElementById("rta-note");
+      const hz = document.getElementById("rta-hz");
+      try {
+        stopRta(true);
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error("이 브라우저는 마이크를 지원하지 않습니다");
+        }
+        const deviceId = document.getElementById("rta-device")?.value;
+        const raw = {
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        };
+        if (deviceId) raw.deviceId = { exact: deviceId };
+        let stream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: raw, video: false });
+        } catch (e1) {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        }
+        rtaStream = stream;
+        await listRtaDevices(rtaStream.getAudioTracks()[0]?.getSettings?.().deviceId);
+        rtaCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (rtaCtx.state === "suspended") await rtaCtx.resume();
+        rtaSrc = rtaCtx.createMediaStreamSource(rtaStream);
+        rtaGainNode = rtaCtx.createGain();
+        rtaGainNode.gain.value = currentRtaGain();
+        const gain = rtaGainNode;
+        rtaAnalyser = rtaCtx.createAnalyser();
+        rtaAnalyser.fftSize = 8192;
+        rtaAnalyser.smoothingTimeConstant = 0;
+        rtaAnalyser.minDecibels = -75;
+        rtaAnalyser.maxDecibels = -25;
+        rtaSrc.connect(gain);
+        gain.connect(rtaAnalyser);
+        if (hz) hz.textContent = "— Hz";
+        if (note) note.textContent = "컴퓨터 마이크 듣는 중";
+        drawRta();
+      } catch (e) {
+        if (hz) hz.textContent = "마이크 실패";
+        if (note) note.textContent = (e && e.message) ? e.message : "권한을 허용해 주세요";
+        alert("마이크를 열 수 없습니다.\n크롬에서 주소창 왼쪽 자물쇠 → 마이크 허용.\n가능하면 파일을 로컬서버로 여세요.");
+      }
+    }
+
+    function stopRta(keepView) {
+      if (rtaAnim) { cancelAnimationFrame(rtaAnim); rtaAnim = null; }
+      if (rtaStream) {
+        rtaStream.getTracks().forEach(t => t.stop());
+        rtaStream = null;
+      }
+      if (rtaCtx) { try { rtaCtx.close(); } catch (e) {} rtaCtx = null; }
+      rtaAnalyser = null;
+      rtaSrc = null;
+      rtaGainNode = null;
+      rtaEnv = null;
+      if (!keepView) {
+        const hz = document.getElementById("rta-hz");
+        const note = document.getElementById("rta-note");
+        if (hz) hz.textContent = "— Hz";
+        if (note) note.textContent = "마이크 꺼짐";
+      }
+    }
+
+    function drawRta() {
+      if (!rtaAnalyser) return;
+      const canvas = document.getElementById("rta-canvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const buf = new Uint8Array(rtaAnalyser.frequencyBinCount);
+      rtaAnalyser.getByteFrequencyData(buf);
+      const atk = currentRtaAttack();
+      const rel = currentRtaRelease();
+      if (!rtaEnv || rtaEnv.length !== buf.length) rtaEnv = new Float32Array(buf.length);
+      for (let i = 0; i < buf.length; i++) {
+        const x = buf[i];
+        const s = x >= rtaEnv[i] ? atk : rel;
+        rtaEnv[i] = s * rtaEnv[i] + (1 - s) * x;
+        buf[i] = rtaEnv[i];
+      }
+      const sr = rtaCtx.sampleRate;
+      const nyquist = sr / 2;
+      const n = buf.length;
+
+      const left = 8, right = 8, top = 8, bottom = 22;
+      const W = canvas.width - left - right;
+      const H = canvas.height - top - bottom;
+      const fMin = 32, fMax = Math.min(8000, nyquist);
+      function xOfF(f) {
+        const t = Math.log(f / fMin) / Math.log(fMax / fMin);
+        return left + t * W;
+      }
+
+      ctx.fillStyle = "#0d1117";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const freqMinor = [32,40,50,63,80,100,125,160,200,250,315,400,500,630,800,1000,1250,1600,2000,2500,3150,4000,5000,6300,8000];
+      const freqMajor = [32,50,80,125,200,320,500,800,1000,2000,3200,5000];
+      freqMinor.forEach(f => {
+        if (f < fMin || f > fMax) return;
+        const x = xOfF(f);
+        ctx.strokeStyle = "rgba(255,255,255,0.06)";
+        ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, top + H); ctx.stroke();
+      });
+      freqMajor.forEach(f => {
+        if (f < fMin || f > fMax) return;
+        const x = xOfF(f);
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, top + H); ctx.stroke();
+      });
+      for (let i = 0; i <= 6; i++) {
+        const y = top + (H * i) / 6;
+        ctx.strokeStyle = "rgba(255,255,255,0.06)";
+        ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(left + W, y); ctx.stroke();
+      }
+
+      ctx.fillStyle = "#8b949e";
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "center";
+      freqMajor.forEach(f => {
+        if (f < fMin || f > fMax) return;
+        const lab = f >= 1000 ? (f / 1000).toString().replace(/\.0$/, "") + "k" : String(f);
+        ctx.fillText(lab, xOfF(f), canvas.height - 6);
+      });
+      ctx.textAlign = "left";
+
+      let peakBin = 0, peakVal = 0;
+      const minF = 80, maxPk = 8000;
+      for (let i = 1; i < n; i++) {
+        const f = i * nyquist / n;
+        if (f < minF || f > maxPk) continue;
+        if (buf[i] > peakVal) { peakVal = buf[i]; peakBin = i; }
+      }
+      const peakHz = peakBin * nyquist / n;
+
+      const bars = 120;
+      const bw = W / bars;
+      for (let i = 0; i < bars; i++) {
+        const t0 = i / bars, t1 = (i + 1) / bars;
+        const f0 = fMin * Math.pow(fMax / fMin, t0);
+        const f1 = fMin * Math.pow(fMax / fMin, t1);
+        const i0 = Math.max(1, Math.floor(f0 * n / nyquist));
+        const i1 = Math.min(n - 1, Math.ceil(f1 * n / nyquist));
+        let v = 0;
+        for (let k = i0; k <= i1; k++) v = Math.max(v, buf[k]);
+        const h = (v / 255) * H;
+        const isPeak = peakHz >= f0 && peakHz < f1;
+        ctx.fillStyle = isPeak ? "#ff453a" : "#30d158";
+        ctx.globalAlpha = 0.9;
+        ctx.fillRect(left + i * bw + 0.5, top + H - h, Math.max(bw - 1, 1), h);
+        ctx.globalAlpha = 1;
+      }
+
+      if (peakVal > 40) {
+        const px = xOfF(Math.max(fMin, Math.min(fMax, peakHz)));
+        ctx.strokeStyle = "rgba(255,69,58,0.85)";
+        ctx.beginPath(); ctx.moveTo(px, top); ctx.lineTo(px, top + H); ctx.stroke();
+        ctx.fillStyle = "#ff453a";
+        ctx.font = "bold 11px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(Math.round(peakHz) + " Hz", px, top + 12);
+        ctx.textAlign = "left";
+      }
+
+      const el = document.getElementById("rta-hz");
+      const note = document.getElementById("rta-note");
+      const lastEl = document.getElementById("rta-last");
+      if (peakVal > 40) {
+        el.textContent = Math.round(peakHz) + " Hz";
+        note.textContent = peakVal > 160 ? "주의: 강하게 울리는 중" : "현재 제일 큰 봉우리";
+        if (peakVal > 70) {
+          rtaLastPeakHz = Math.round(peakHz);
+          rtaLastPeakAt = Date.now();
+        }
+      } else {
+        el.textContent = "— Hz";
+        note.textContent = "대기 중";
+      }
+      if (lastEl) {
+        lastEl.textContent = rtaLastPeakHz
+          ? ("마지막 피드백: " + rtaLastPeakHz + " Hz")
+          : "마지막 피드백: —";
+      }
+
+      rtaAnim = requestAnimationFrame(drawRta);
+    }
+
+
     showCategories();
   </script>
 </body>
