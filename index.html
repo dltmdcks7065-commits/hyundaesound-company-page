@@ -1393,7 +1393,7 @@
               <div class="patch-line">LA8 : LA8 owner's manual (EN) version 19.0 April 1, 2020</div>
               <div class="patch-line">Preset Guide : Preset Guide owner's manual (EN) version 27.0 June 3, 2025</div>
               <div class="patch-line">D80 : 1.14 en, 09/2019</div>
-              <div class="patch-line">Pad Remote Manual : SD10 iPad Remote Manual</div>
+              <div class="patch-line">Pad Remote Manual : HDS iPad Remote Manual v02 (2026.09.22)</div>
               <div class="patch-ellipsis">…</div>
             </div>
           </div>
@@ -1624,7 +1624,7 @@
       {
         brand: "DiGiCo",
         items: [
-          { name: "Pad Remote Manual", subtitle: "SD10 iPad Remote Manual", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/SD10_iPad_Remote_Manual.pptx.pdf" }
+          { name: "Pad Remote Manual", subtitle: "HDS iPad Remote Manual v02", url: "https://raw.githubusercontent.com/dltmdcks7065-commits/hyundae-manuals/main/20260922_HDS_%E1%84%86%E1%85%A6%E1%84%82%E1%85%B2%E1%84%8B%E1%85%A5%E1%86%AF_iPad_Remote_Manual_v02.pptx.pdf" }
         ]
       }
     ];
@@ -3841,7 +3841,26 @@
       { name: "K2 쉐리엇", w: 1450, d: 610, stack: 1, h: 1600, kg: 265 },
       { name: "KS28 쉐리엇", w: 1450, d: 813, stack: 1, h: 1930, kg: 290.5 },
       { name: "LA-RAK II AVB", w: 609, d: 513, stack: 2, h: 1175, kg: 203 },
-      { name: "K-BUMPFLIGHT", w: 1450, d: 643, stack: 1, h: 1224, kg: 105 }
+      { name: "K-BUMPFLIGHT", w: 1450, d: 643, stack: 1, h: 1224, kg: 105 },
+      { name: "M4", w: 630, d: 800, stack: 2, h: 750, kg: 0 },
+      { name: "M6", w: 590, d: 720, stack: 2, h: 725, kg: 0 },
+      { name: "MAX", w: 600, d: 760, stack: 2, h: 795, kg: 0 },
+      { name: "ci80", w: 590, d: 540, stack: 3, h: 660, kg: 0 },
+      { name: "X8 대", w: 580, d: 810, stack: 2, h: 610, kg: 0 },
+      { name: "SD7", w: 620, d: 1230, stack: 1, h: 1600, kg: 0 },
+      { name: "SD10", w: 500, d: 1150, stack: 1, h: 1580, kg: 0 },
+      { name: "Q338", w: 645, d: 1140, stack: 1, h: 1715, kg: 0 },
+      { name: "M32", w: 700, d: 520, stack: 3, h: 970, kg: 0 },
+      { name: "LINE BOX 대", w: 600, d: 850, stack: 2, h: 1220, kg: 0 },
+      { name: "DO25 BOX", w: 770, d: 630, stack: 2, h: 1000, kg: 0 },
+      { name: "QSC TOP", w: 490, d: 800, stack: 2, h: 890, kg: 0 },
+      { name: "QSC SUB", w: 660, d: 710, stack: 2, h: 840, kg: 0 },
+      { name: "D80", w: 590, d: 870, stack: 2, h: 780, kg: 0 },
+      { name: "J8", w: 370, d: 720, stack: 2, h: 1100, kg: 0 },
+      { name: "단상박스", w: 730, d: 850, stack: 2, h: 590, kg: 0 },
+      { name: "SB 18", w: 570, d: 875, stack: 2, h: 760, kg: 0 },
+      { name: "스탠드통 대", w: 615, d: 1285, stack: 1, h: 725, kg: 0 },
+      { name: "스탠드통 소", w: 605, d: 1225, stack: 1, h: 495, kg: 0 }
     ];
 
     let truckFleet = [];
@@ -3911,6 +3930,7 @@
       const sel = document.getElementById("truck-type");
       if (sel) sel.value = truckFleet[i].typeId;
       renderFleetTabs();
+      renderTruckPlans();
       renderTruckPlan();
     }
 
@@ -3922,9 +3942,9 @@
       const sel = document.getElementById("truck-type");
       if (sel) sel.value = truckFleet[truckActive].typeId;
       renderFleetTabs();
+      renderTruckPlans();
       renderTruckPlan();
     }
-
 
     function showTruckCalc() {
       hideAllViews();
@@ -4146,23 +4166,48 @@
     function renderTruckPlans() {
       const box = document.getElementById("truck-plans");
       if (!box) return;
-      if (!truckPlans.A) { box.innerHTML = ""; return; }
+      const slot = truckFleet[truckActive];
+      const plans = slot && slot.plans;
+      if (!plans || !plans.A) { box.innerHTML = ""; return; }
+      const pick = slot.planPick || "A";
       box.innerHTML = ["A","B","C"].map(k => {
-        const p = truckPlans[k];
+        const p = plans[k];
         const title = k === "A" ? "1순위 규칙" : k === "B" ? "효율 우선" : "틈새 우선";
         const ov = p.overflow ? ("밖 "+p.overflow+"칸") : "내부 수용";
-        return `<button type="button" class="truck-plan${truckPlanPick===k?" on":""}" onclick="applyTruckPlan('${k}')"><b>${k}안</b><span>${title}<br>${p.usedL}mm · ${ov}</span></button>`;
+        return `<button type="button" class="truck-plan${pick===k?" on":""}" onclick="applyTruckPlan('${k}')"><b>${k}안</b><span>${title}<br>${p.usedL}mm · ${ov}</span></button>`;
       }).join("");
     }
 
     function applyTruckPlan(key) {
-      const p = truckPlans[key];
+      const slot = truckFleet[truckActive];
+      const p = slot && slot.plans && slot.plans[key];
       if (!p) return;
-      truckPlanPick = key;
+      slot.planPick = key;
       truckLoad = cloneTruckItems(p.items);
-      if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+      slot.load = truckLoad;
       renderTruckPlans();
       renderTruckPlan();
+    }
+
+    function truckOfSlot(slot) {
+      return truckTypes.find(t => t.id === slot.typeId) || currentTruck();
+    }
+
+    function assignPlans(slot) {
+      const items = cloneTruckItems(slot.load || []);
+      if (!items.length) {
+        slot.plans = null;
+        slot.planPick = "A";
+        return;
+      }
+      const t = truckOfSlot(slot);
+      slot.plans = {
+        A: buildPlanA(t, items),
+        B: buildPlanB(t, items),
+        C: buildPlanC(t, items)
+      };
+      slot.planPick = "A";
+      slot.load = cloneTruckItems(slot.plans.A.items);
     }
 
     function optimizeTruckLoad() {
@@ -4170,14 +4215,10 @@
         alert("먼저 장비를 추가하세요");
         return;
       }
-      const truck = currentTruck();
-      const snapshot = cloneTruckItems(truckLoad);
-      truckPlans.A = buildPlanA(truck, snapshot);
-      truckPlans.B = buildPlanB(truck, snapshot);
-      truckPlans.C = buildPlanC(truck, snapshot);
-      truckPlanPick = "A";
-      truckLoad = cloneTruckItems(truckPlans.A.items);
-      if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
+      const start = truckActive;
+      const planA = buildPlanA(currentTruck(), cloneTruckItems(truckLoad));
+      truckLoad = cloneTruckItems(planA.items);
+      truckFleet[truckActive].load = truckLoad;
 
       let added = 0;
       for (let n = 0; n < 8; n++) {
@@ -4191,10 +4232,14 @@
         if (truckFleet[truckActive]) truckFleet[truckActive].load = truckLoad;
         added++;
       }
+
+      for (let i = start; i < truckFleet.length; i++) assignPlans(truckFleet[i]);
+      truckActive = start;
+      syncActiveLoad();
       renderFleetTabs();
       renderTruckPlans();
       renderTruckPlan();
-      alert(added ? ("A안 적용\n넘친 짐은 3.5톤 " + added + "대에 옮겼습니다\nB/C안을 눌러 비교하세요") : "A안 적용. B/C안에서 다른 배치를 볼 수 있습니다");
+      alert(added ? ("A안 적용\n넘친 짐은 3.5톤 " + added + "대에 옮겼습니다\n각 용차의 B/C안은 그 차 짐만 다시 배치합니다") : "A안 적용. B/C안에서 다른 배치를 볼 수 있습니다");
     }
 
     function runOptimizeCore() {
@@ -4623,7 +4668,7 @@
       ctx.fillText("앞(운전석 방향)", pad, 12);
       ctx.fillText(truck.w + "mm", pad + truck.w * scale / 2 - 20, pad + truck.l * scale + 14);
 
-      const colorMap = { "K1 쉐리엇": "#0071e3", "K2 쉐리엇": "#ff9500", "KS28 쉐리엇": "#34c759", "LA-RAK II AVB": "#af52de", "K-BUMPFLIGHT": "#5e5ce6" };
+      const colorMap = { "K1 쉐리엇": "#0071e3", "K2 쉐리엇": "#ff9500", "KS28 쉐리엇": "#34c759", "LA-RAK II AVB": "#af52de", "K-BUMPFLIGHT": "#5e5ce6", "M4": "#64d2ff", "M6": "#0a84ff", "MAX": "#5ac8fa", "ci80": "#30b0c7", "X8 대": "#32ade6", "SD7": "#bf5af2", "SD10": "#ff375f", "Q338": "#ff2d55", "M32": "#ff6482", "LINE BOX 대": "#ac8e68", "DO25 BOX": "#a2845e", "QSC TOP": "#ff9f0a", "QSC SUB": "#ffd60a", "D80": "#64d2ff", "J8": "#30d158", "단상박스": "#8e8e93", "SB 18": "#34c759", "스탠드통 대": "#636366", "스탠드통 소": "#aeaeb2" };
       truckHitRects = [];
       packed.placed.forEach((p) => {
         const x = pad + p.x * scale;
